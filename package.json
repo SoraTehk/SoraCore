@@ -1,0 +1,20 @@
+{
+    "name": "com.huysora.soracore",
+    "version": "0.0.1",
+    "displayName": "Sora Core",
+    "description": "Unity Package for my repeatable needs",
+    "unity": "2020.3.20f1",
+    "documentationUrl": "https://github.com/HuySora/SoraCore",
+    "changelogUrl": "https://github.com/HuySora/SoraCore",
+    "licensesUrl": "https://github.com/HuySora/SoraCore",
+    "dependencies": {
+      "com.domybest.mybox": "1.7.0",
+      "com.unity.textmeshpro": "3.0.6"
+   },
+   "keywords": ["sora", "manager", "system"],
+    "author": {
+      "name": "Tran Duc Huy",
+      "email": "huytran1998.dev@gmail.com",
+      "url": "https://github.com/HuySora"
+    }
+  }
