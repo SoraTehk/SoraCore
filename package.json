@@ -1,9 +1,9 @@
 {
     "name": "com.huysora.soracore",
     "version": "0.0.1",
-    "displayName": "Sora Core",
+    "displayName": "SoraCore",
     "description": "Unity Package for my repeatable needs",
-    "unity": "2020.3.20f1",
+    "unity": "2020.3",
     "documentationUrl": "https://github.com/HuySora/SoraCore",
     "changelogUrl": "https://github.com/HuySora/SoraCore",
     "licensesUrl": "https://github.com/HuySora/SoraCore",
