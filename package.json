@@ -1,6 +1,6 @@
 {
     "name": "com.huysora.soracore",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "displayName": "SoraCore",
     "description": "Unity Package for my repeatable needs",
     "unity": "2021.3",
@@ -18,5 +18,12 @@
         "name": "Tran Duc Huy",
         "email": "huytran1998.dev@gmail.com",
         "url": "https://github.com/HuySora"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "SoraCore Lite",
+            "description": "Contains setup for SoraCore uses",
+            "path": "Samples~/Lite"
+        }
+    ]
 }
