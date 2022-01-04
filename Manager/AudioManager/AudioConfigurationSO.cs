@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using MyBox;
 
-namespace Sora.Manager {
-    [CreateAssetMenu(fileName = "AudioConfig", menuName = "Sora/Data/AudioConfig", order = 12)]
+namespace SoraCore.Manager {
+    [CreateAssetMenu(fileName = "AudioConfiguration", menuName = "SoraCore/Audio Manager/AudioConfigurationData", order = 52)]
     public class AudioConfigurationSO : ScriptableObject {
-        public MixerGroupSO OutputAudioMixerGroup = null;
         enum PriorityLevel {
             Highest = 0,
             High = 64,
@@ -23,14 +23,13 @@ namespace Sora.Manager {
             set { _priorityLevel = (PriorityLevel)value; }
         }
 
-        [Header("Sound properties")]
-        public bool Mute = false;
+        [Separator("Sound properties")]
         [Range(0f, 1f)] public float Volume = 1f;
         [Range(-3f, 3f)] public float Pitch = 1f;
-        [Range(-1f, 1f)] public float PanStereo = 0f;
+        [Range(-1f, 1f)] public float StereoPan = 0f;
         [Range(0f, 1.1f)] public float ReverbZoneMix = 1f;
 
-        [Header("Spatialisation")]
+        [Separator("Spatialisation")]
         [Range(0f, 1f)] public float SpatialBlend = 1f;
         public AudioRolloffMode RolloffMode = AudioRolloffMode.Logarithmic;
         [Range(0.1f, 5f)] public float MinDistance = 0.1f;
@@ -38,33 +37,35 @@ namespace Sora.Manager {
         [Range(0, 360)] public int Spread = 0;
         [Range(0f, 5f)] public float DopplerLevel = 1f;
 
-        [Header("Ignores")]
+        [Separator("Ignores")]
         public bool BypassEffects = false;
         public bool BypassListenerEffects = false;
         public bool BypassReverbZones = false;
         public bool IgnoreListenerVolume = false;
         public bool IgnoreListenerPause = false;
+    }
 
-        public void ApplyTo(AudioSource audioSource)
-        {
-            audioSource.outputAudioMixerGroup = this.OutputAudioMixerGroup.group;
-            audioSource.mute = this.Mute;
-            audioSource.bypassEffects = this.BypassEffects;
-            audioSource.bypassListenerEffects = this.BypassListenerEffects;
-            audioSource.bypassReverbZones = this.BypassReverbZones;
-            audioSource.priority = this.Priority;
-            audioSource.volume = this.Volume;
-            audioSource.pitch = this.Pitch;
-            audioSource.panStereo = this.PanStereo;
-            audioSource.spatialBlend = this.SpatialBlend;
-            audioSource.reverbZoneMix = this.ReverbZoneMix;
-            audioSource.dopplerLevel = this.DopplerLevel;
-            audioSource.spread = this.Spread;
-            audioSource.rolloffMode = this.RolloffMode;
-            audioSource.minDistance = this.MinDistance;
-            audioSource.maxDistance = this.MaxDistance;
-            audioSource.ignoreListenerVolume = this.IgnoreListenerVolume;
-            audioSource.ignoreListenerPause = this.IgnoreListenerPause;
+    public static class ExtensionMethod {
+        /// <summary>
+        /// Apply <paramref name="config"/> to this <see cref="AudioSource"/>
+        /// </summary>
+        public static void ApplyConfig(this AudioSource audioSrc, AudioConfigurationSO config) {
+            audioSrc.bypassEffects = config.BypassEffects;
+            audioSrc.bypassListenerEffects = config.BypassListenerEffects;
+            audioSrc.bypassReverbZones = config.BypassReverbZones;
+            audioSrc.priority = config.Priority;
+            audioSrc.volume = config.Volume;
+            audioSrc.pitch = config.Pitch;
+            audioSrc.panStereo = config.StereoPan;
+            audioSrc.spatialBlend = config.SpatialBlend;
+            audioSrc.reverbZoneMix = config.ReverbZoneMix;
+            audioSrc.dopplerLevel = config.DopplerLevel;
+            audioSrc.spread = config.Spread;
+            audioSrc.rolloffMode = config.RolloffMode;
+            audioSrc.minDistance = config.MinDistance;
+            audioSrc.maxDistance = config.MaxDistance;
+            audioSrc.ignoreListenerVolume = config.IgnoreListenerVolume;
+            audioSrc.ignoreListenerPause = config.IgnoreListenerPause;
         }
     }
 }

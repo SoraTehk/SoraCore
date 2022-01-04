@@ -5,9 +5,9 @@ using System;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
-using Sora.Extension;
+using SoraCore.Extension;
 
-namespace Sora.Callback {
+namespace SoraCore.Callback {
     public enum TimeType {
         Scaled,
         Unscaled,

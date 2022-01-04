@@ -1,185 +1,139 @@
+using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+
+#if UNITY_EDITOR
 using UnityEditor;
-using System.Diagnostics;
-using MyBox;
+#endif
 
-using Debug = UnityEngine.Debug;
-
-namespace Sora.Manager {
-    [CreateAssetMenu(fileName = "AudioManager", menuName = "Sora/Manager/AudioManager")]
-    public class AudioManager : SingletonScriptableObject<AudioManager> {
+namespace SoraCore.Manager {
+    using static SoraCore.Constant;
+    public class AudioManager : MonoBehaviour {
         public const float MIN_VOLUME = 0.0001f;
-        public AudioMixer audioMixer;
-        public float volumeMultiplier = 30f;
-        public PrefabDataSO prefabData;
+        [field: SerializeField] public AudioMixer AudioMixer { get;  private set; }
+        [field: SerializeField] public float VolumeMultiplier { get; private set; } = 30f;
+        [SerializeField] private PrefabSO _audioSourcePrefab;
 
-        [SerializeField]string musicMixerGroupLookupName;
-        [SerializeField]string unsortedMixerGroupLookupName;
-        [SerializeField]string[] mixerGroupFolders;
-        [SerializeField]string[] audioFolders;
-        [Space]
-        [Header("◀GENERATING FIELDS▶")]
-        public MixerGroupSO musicMixerGroup;
-        public MixerGroupSO unsortedMixerGroup;
-        public List<MixerGroupSO> mixerGroups;
-        public List<AudioSO> audios;
+        [Separator("Broadcasting on")]
+        [SerializeField] private GameObjectManagerEventChannelSO _goManagerEC;
 
-        public static void Play(AudioSO audio) => Play(audio, audio.audioConfigurationSO);
-        public static void Play(AudioSO audio, AudioConfigurationSO config) {
-            AudioSource audioSource = PrefabManager.Spawn(SharedInstance.prefabData, null).GetComponent<AudioSource>();
+        [Separator("Listening to")]
+        [SerializeField] private PlayAudioEventChannelSO _playAudioEC;
+        [SerializeField] private AudioManagerEventChannelSO _audioManagerEC;
 
-            //TODO: Optimize this if needed
+        [field: Separator("Data")]
+        [field: SerializeField] public List<MixerGroupSO> MixerGroups { get; private set; }
+        [field: SerializeField] public List<AudioSO> Audios { get; private set; }
+        // Parameters for scanning process
+#if UNITY_EDITOR
+        [SerializeField] private string[] _mixerGroupFolders;
+        [SerializeField] private string[] _audioFolders;
+#endif
+
+        private void OnEnable() {
+            _playAudioEC.Requested += Play;
+            _audioManagerEC.SetVolumeRequested += SetVolume;
+            _audioManagerEC.SavePlayerPrefsRequested += SavePlayerPrefs;
+            _audioManagerEC.LoadPlayerPrefsRequested += LoadPlayerPrefs;
+            _audioManagerEC.LoadPlayerPrefsAllRequested += LoadPlayerPrefsAll;
+        }
+
+        private void OnDisable() {
+            _playAudioEC.Requested -= Play;
+            _audioManagerEC.SetVolumeRequested -= SetVolume;
+            _audioManagerEC.SavePlayerPrefsRequested -= SavePlayerPrefs;
+            _audioManagerEC.LoadPlayerPrefsRequested -= LoadPlayerPrefs;
+            _audioManagerEC.LoadPlayerPrefsAllRequested -= LoadPlayerPrefsAll;
+        }
+
+        /// <summary>
+        /// Spawn an <see cref="AudioSource"/> that play <paramref name="audio"/> at <paramref name="position"/> using custom configuration
+        /// </summary>
+        public void Play(AudioSO audio, Vector3 position, AudioConfigurationSO config, MixerGroupSO group) {
+            /// Spawn an audio source at target position
+            AudioSource audioSource = _goManagerEC.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
+            audioSource.transform.position = position;
+
+            // Apply configuration to the audio source
             audioSource.clip = audio.GetClip;
-            audioSource.loop = audio.loop;
-            config?.ApplyTo(audioSource);
+            audioSource.loop = audio.Loop;
+            audioSource.ApplyConfig(config);
+            audioSource.outputAudioMixerGroup = group.Group;
 
+            // Play
             audioSource.Play();
         }
 
-        #region Volume
-        public static void LoadPlayerPrefsAll() {
-            foreach(MixerGroupSO mixerGroup in SharedInstance.mixerGroups) {
-                float value = LoadPlayerPrefs(mixerGroup);
-                #region EDITOR
-#if UNITY_EDITOR
-                if(SharedInstance.debugMode) Debug.Log(SORA_MANAGER_LOG + ": <b>" + mixerGroup.volumeParameter + "</b> load and set to " + value);
-#endif
-                #endregion
-                AudioManager.SetVolume(mixerGroup, value);
-            }
-        }
+        /// <summary>
+        /// Change dB volume of <paramref name="mixerGroup"/> base on <paramref name="value"/>
+        /// </summary>
+        public void SetVolume(MixerGroupSO mixerGroup, float value) {
+            if (value > 1) Debug.LogWarning(SORA_WARNING + ": <b>" + mixerGroup.Group.name + " value</b> paramater > 1, it could be too loud.");
 
-        public static void SavePlayerPrefs(MixerGroupSO mixerGroup, float value) {
-            PlayerPrefs.SetFloat(typeName + mixerGroup.volumeParameter, value);
-        }
-        public static float LoadPlayerPrefs(MixerGroupSO mixerGroup) {
-            if(mixerGroup) {
-                return PlayerPrefs.GetFloat(typeName + mixerGroup.volumeParameter, MIN_VOLUME);
-            }
-            #region EDITOR
-#if UNITY_EDITOR
-            if(SharedInstance.debugMode) Debug.Log(SORA_MANAGER_LOG + ": <b>mixerGroup</b> paramater are null.\n\n<b>LoadPlayerPrefs(MixerGroupSO mixerGroup)</b>");
-#endif
-            #endregion
-            return 1f;
-        }
+            // Magic math lol https://www.youtube.com/watch?v=MmWLK9sN3s8
+            float dBValue = Mathf.Log10(Mathf.Max(MIN_VOLUME, value)) * VolumeMultiplier;
+            AudioMixer.SetFloat(mixerGroup.VolumeParameter, dBValue);
 
-        public static void SetVolume(MixerGroupSO mixerGroup, float value) {
-            #region EDITOR
-#if UNITY_EDITOR
-            const string METHOD_NAME = "<b>SetVolume(MixerGroupSO mixerGroup, float value)</b>";
-#endif
-            #endregion
-            if(!mixerGroup) {
-                #region EDITOR
-#if UNITY_EDITOR
-                if(SharedInstance.debugMode) Debug.Log(SORA_MANAGER_LOG + ": <b>mixerGroup</b> paramater are null.\n\n" + METHOD_NAME);
-#endif
-                #endregion
-                return;
-            }
-
-            #region EDITOR
-#if UNITY_EDITOR
-            if(SharedInstance.debugMode) {
-                if      (value <=0) Debug.Log(SORA_MANAGER_LOG + ": <b>" + mixerGroup.group.name + " value</b> paramater should be at least 0.0001f. \n\n" + METHOD_NAME);
-                else if (value > 1) Debug.Log(SORA_MANAGER_LOG + ": <b>" + mixerGroup.group.name + " value</b> paramater > 1, it could be too loud. \n\n" + METHOD_NAME);
-            }
-#endif
-            #endregion
-            //Magic math lol
-            float dBValue = Mathf.Log10(Mathf.Max(MIN_VOLUME, value)) * SharedInstance.volumeMultiplier;
-            SharedInstance.audioMixer.SetFloat(mixerGroup.volumeParameter, dBValue);
             return;
-
         }
-        #endregion
 
-    #region EDITOR
+        public void SavePlayerPrefs(MixerGroupSO mixerGroup, float value) {
+            PlayerPrefs.SetFloat("AudioManager" + mixerGroup.VolumeParameter, value);
+        }
+        public float LoadPlayerPrefs(MixerGroupSO mixerGroup) {
+            if (!mixerGroup) return 1f;
+
+            // TODO: Handle save/load more clearly
+            return PlayerPrefs.HasKey("AudioManager" + mixerGroup.VolumeParameter)
+                 ? PlayerPrefs.GetFloat("AudioManager" + mixerGroup.VolumeParameter, MIN_VOLUME)
+                 : 1f;
+        }
+        /// <summary>
+        /// Load & set all PlayerPrefs
+        /// </summary>
+        public void LoadPlayerPrefsAll() {
+            foreach (MixerGroupSO mixerGroup in MixerGroups)
+                SetVolume(mixerGroup, LoadPlayerPrefs(mixerGroup));
+        }
+
 #if UNITY_EDITOR
-        public void Generate() {
-            Stopwatch stopwatch = new Stopwatch();
+        [ButtonMethod]
+        public void ScanProject() {
+            var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
 
             #region MixerData
             //Clear all field first
-            musicMixerGroup = null;
-            unsortedMixerGroup = null;
-            mixerGroups.Clear();
-            
-            //What to call in debug log
-            string musicIdentifier = nameof(MixerGroupSO) + " with MixerGroup as " + musicMixerGroupLookupName;
-            string unsortedIdentifier = nameof(MixerGroupSO) + " with MixerGroup as " + unsortedMixerGroupLookupName;
+            MixerGroups.Clear();
 
             //Search though project asset folders
-            string[] assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(MixerGroupSO).FullName, mixerGroupFolders);
-            foreach(string assetGUID in assetGUIDs) {
+            string[] assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(MixerGroupSO).FullName, _mixerGroupFolders);
+            foreach (string assetGUID in assetGUIDs)
+            {
                 string path = AssetDatabase.GUIDToAssetPath(assetGUID);
                 MixerGroupSO mixerData = AssetDatabase.LoadAssetAtPath<MixerGroupSO>(path);
-                mixerGroups.Add(mixerData);
-
-                //Assign music/unsorted mixer data
-                if(mixerData.group.ToString() == musicMixerGroupLookupName) {
-                    if(!musicMixerGroup) {
-                        musicMixerGroup = mixerData;
-                    } else {
-                        Debug.LogWarning("More than 1 " + musicIdentifier + " was found");
-                        Debug.LogWarning("Using " + musicIdentifier + " at: " + path, musicMixerGroup);
-                    }
-                }
-                if(mixerData.group.ToString() == unsortedMixerGroupLookupName) {
-                    if(!unsortedMixerGroup) {
-                        unsortedMixerGroup = mixerData;
-                    } else {
-                        Debug.LogWarning("More than 1 " + unsortedIdentifier + " was found");
-                        Debug.LogWarning("Using " + unsortedIdentifier + " at: " + path, unsortedMixerGroup);
-                    }
-                }
-            }
-
-            //If cant find any
-            if(!musicMixerGroup) {
-                Debug.LogWarning("Cant find any " + musicIdentifier);
-            }
-            if(!unsortedMixerGroup) {
-                Debug.LogWarning("Cant find any " + unsortedIdentifier);
+                MixerGroups.Add(mixerData);
             }
             #endregion
+
             #region AudioData
             //Clear all field first
-            audios.Clear();
+            Audios.Clear();
 
             //Search though project asset folders
-            assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(AudioSO).FullName, audioFolders);
-            foreach (string assetGUID in assetGUIDs) {
+            assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(AudioSO).FullName, _audioFolders);
+            foreach (string assetGUID in assetGUIDs)
+            {
                 string path = AssetDatabase.GUIDToAssetPath(assetGUID);
-                audios.Add(AssetDatabase.LoadAssetAtPath<AudioSO>(path));
+                Audios.Add(AssetDatabase.LoadAssetAtPath<AudioSO>(path));
             }
             #endregion
 
             stopwatch.Stop();
-            Debug.Log("Generated in: " + stopwatch.ElapsedMilliseconds + "ms");
+            Debug.Log("Scanned in: " + stopwatch.ElapsedMilliseconds + "ms");
         }
 #endif
-    #endregion
     }
-    #region EDITOR
-#if UNITY_EDITOR
-    [CustomEditor(typeof(AudioManager), editorForChildClasses: true)]
-    public class AudioManagerEditor : Editor {
-        public override void OnInspectorGUI() {
-            base.OnInspectorGUI();
-
-            GUI.enabled = true;
-
-            AudioManager e = target as AudioManager;
-            if (GUILayout.Button("Generate"))
-                e?.Generate();
-        }
-    }
-#endif
-    #endregion
 }

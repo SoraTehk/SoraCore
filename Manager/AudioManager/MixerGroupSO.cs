@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Sora.Manager {
-    [CreateAssetMenu(fileName = "MixerGroup", menuName = "Sora/Data/MixerGroup", order = 13)]
+namespace SoraCore.Manager {
+    [CreateAssetMenu(fileName = "MixerGroup", menuName = "SoraCore/Audio Manager/MixerGroupData", order = 53)]
     public class MixerGroupSO : ScriptableObject {
-        public AudioMixerGroup group = null;
-        public string pitchParameter = null;
-        public string volumeParameter = null;
-        public string[] otherParameter = null;
+        public AudioMixerGroup Group = null;
+        public string VolumeParameter = null;
+        public string PitchParameter = null;
+        public string[] Parameters = null;
     }
 }

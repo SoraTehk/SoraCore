@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Object = UnityEngine.Object;
-using static Sora.Constant;
+using static SoraCore.Constant;
 
-namespace Sora.Callback {
+namespace SoraCore.Callback {
     public class CallbackProcessor {
         #region MonoBehaviourHook
         private class MonoBehaviourHook : MonoBehaviour {
