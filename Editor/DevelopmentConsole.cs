@@ -8,8 +8,14 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEditor.SceneManagement;
 
-public class DevelopmentConsole : EditorWindow
+public class DevelopmentConsole : EditorWindow, IHasCustomMenu
 {
+    public VisualTreeAsset sceneListEntryXML;
+    public VisualTreeAsset sceneInfoXML;
+
+    private TwoPaneSplitView _splitView;
+    private TemplateContainer _rightPane;
+
     [MenuItem("SoraCore/Development Console")]
     public static void ShowWindow()
     {
@@ -17,91 +23,89 @@ public class DevelopmentConsole : EditorWindow
         window.titleContent = new GUIContent("Development Console");
     }
 
-    private ScrollView _rightPane;
+    public void AddItemsToMenu(GenericMenu menu) {
+        menu.AddItem(new GUIContent("Change Orientation"), false, () => {
+            // TODO: Splitview drag-able separator cut halfway
+            if (_splitView.orientation == TwoPaneSplitViewOrientation.Horizontal)
+            {
+                _splitView.orientation = TwoPaneSplitViewOrientation.Vertical;
+            }
+            else
+            {
+                _splitView.orientation = TwoPaneSplitViewOrientation.Horizontal;
+            }
+
+        });
+    }
 
     public void CreateGUI()
     {
-        TwoPaneSplitView splitView = new(0, 250, TwoPaneSplitViewOrientation.Horizontal);
-        rootVisualElement.Add(splitView);
+        _splitView = new(0, 250, TwoPaneSplitViewOrientation.Horizontal);
+        rootVisualElement.Add(_splitView);
 
-        // Search for all scene assets
         List<string> sceneAssetPathList = new();
-
-        string[] assetGUIDS = AssetDatabase.FindAssets("t:SceneAsset");
+        // Search for all scenes in project and..
+        string[] assetGUIDS = AssetDatabase.FindAssets("t:SceneAsset", new string[] { "Assets"});
         foreach(string guid in assetGUIDS)
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
-            // Add it to the list
+            // ...add it to the list
             sceneAssetPathList.Add(path);
         }
 
-        ListView leftPaneListView = new();
-        splitView.Add(leftPaneListView);
+        ListView leftPane = new();
+        _splitView.Add(leftPane);
 
-        // TODO: More visual pleasing scene selector; Code looking messy, maybe a refactor?
-        leftPaneListView.itemsSource = sceneAssetPathList;
-        leftPaneListView.makeItem = () => {
-            VisualElement ve = new();
-            // Hierarchy2 extension?
-            ve.style.flexDirection = FlexDirection.Row;
-            ve.style.alignItems = Align.Center;
-            ve.style.justifyContent = Justify.SpaceBetween;
-
-            // ElementAt(0)
-            ve.Add(new Label());
-
-            // ElementAt(1)
-            Button button = new();
-            button.text = "Open";
-            button.style.marginLeft = new StyleLength(StyleKeyword.Auto);
-            ve.Add(button);
-
-            // ElementAt(2)
-            button = new();
-            button.text = "Add";
-            ve.Add(button);
-
-            // ElementAt(3)
-            button = new();
-            button.text = "Remove";
-            ve.Add(button);
-
-            return ve;
+        #region leftPane
+        leftPane.itemsSource = sceneAssetPathList;
+        leftPane.makeItem = () => {
+            var entry = sceneListEntryXML.Instantiate();
+            entry.userData = new SceneListEntryController(entry);
+            return entry;
         };
-        leftPaneListView.bindItem = (item, index) => {
-            Label label = item.ElementAt(0) as Label;
-            Button openButton = item.ElementAt(1) as Button;
-            Button addButton = item.ElementAt(2) as Button;
-            Button removeButton = item.ElementAt(3) as Button;
+        leftPane.bindItem = (item, index) => {
+            var entryController = item.userData as SceneListEntryController;
 
-            label.text = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneAssetPathList[index]).name;
+            entryController.sceneName.text = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneAssetPathList[index]).name;
 
-            openButton.clicked += () => {
-                if(EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            entryController.openButton.clicked += () => {
+                if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                     EditorSceneManager.OpenScene(sceneAssetPathList[index]);
-                };
-            addButton.clicked += () => EditorSceneManager.OpenScene((sceneAssetPathList[index]), OpenSceneMode.Additive);
-            removeButton.clicked += () => {
+            };
+            entryController.addButton.clicked += () => EditorSceneManager.OpenScene((sceneAssetPathList[index]), OpenSceneMode.Additive);
+            entryController.removeButton.clicked += () => {
                 Scene sceneToClose = EditorSceneManager.GetSceneByPath(sceneAssetPathList[index]);
 
                 if (EditorSceneManager.SaveModifiedScenesIfUserWantsTo(new Scene[] { sceneToClose }))
                     EditorSceneManager.CloseScene(sceneToClose, true);
             };
         };
-        leftPaneListView.onSelectionChange += OnSceneSelectionChange;
+        leftPane.onSelectionChange += OnSceneSelectionChange;
+        #endregion
 
-        _rightPane = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
-        splitView.Add(_rightPane);
+        _rightPane = sceneInfoXML.Instantiate();
+        _rightPane.userData = new SceneInfoController(_rightPane);
+        _splitView.Add(_rightPane);
     }
 
     private void OnSceneSelectionChange(IEnumerable<object> items) {
-        // Clear previous content from the pane
-        _rightPane.Clear();
+        // Null checking (show/hide _rightPane)
+        if (items.Any())
+        {
+            _rightPane.visible = true;
+            
+        } else
+        {
+            _rightPane.visible = false;
+            return;
+        }
 
-        // Get the selected scene
-        SceneAsset sceneAsset = items as SceneAsset;
-        if (!sceneAsset) return;
-
-        // TODO: Make some asset reference in right panel
+        // Get the selected item (only 1)
+        string sceneAssetPath = items.Single().ToString();
+        
+        var infoController = _rightPane.userData as SceneInfoController;
+        infoController.assetPath.text = "Path: " + sceneAssetPath;
+        // TODO: Make this field blur out/read only in editor window
+        infoController.sceneAsset.value = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneAssetPath);
     }
 }

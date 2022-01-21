@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:ScrollView name="root" mode="VerticalAndHorizontal">
+        <ui:Label text="Path" display-tooltip-when-elided="true" name="asset-path" />
+        <uie:ObjectField label="Scene Asset" name="scene-asset" type="UnityEditor.SceneAsset, UnityEditor" />
+    </ui:ScrollView>
+</ui:UXML>
