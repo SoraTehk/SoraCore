@@ -39,10 +39,11 @@ namespace SoraCore {
             return AngleToVector2D(newRad, isRadian) * origin.magnitude;
         }
 
-        /// <summary>
-        /// https://gist.github.com/v21/5378391
-        /// </summary>
         #region GetRandomPointOnMesh
+        /// <summary>
+        /// Local normalized
+        /// (https://gist.github.com/v21/5378391)
+        /// </summary>
         public static Vector3 GetRandomPointOnMesh(Mesh mesh) {
             //if you're repeatedly doing this on a single mesh, you'll likely want to cache cumulativeSizes and total
             float[] sizes = GetTriSizes(mesh.triangles, mesh.vertices);

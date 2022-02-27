@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-
 using UnityEngine;
 using UnityEditor;
 
@@ -40,57 +39,27 @@ namespace SoraCore.Extension {
         /// <see cref="Component.GetComponent{T}()"/> but with null checking
         /// </summary>
         /// <returns><see cref="ReturnState.TransformNull"/> | <see cref="ReturnState.Succeed"/> | <see cref="ReturnState.Null"/></returns>
-        public static ReturnState GetComponentNullCheck<T>(this Component transform, ref T result, Object debugContext = null)
-                                                  where T : Component {
-            T[] results = null;
-            ReturnState returnState = transform.GetComponentsNullCheck<T>(ref results, debugContext);
-            result = results[0];
-            return returnState;
-        }
+        public static T GetComponentNullCheck<T>(this Component transform, Object debugContext = null) where T : Component
+            => transform.GetComponentsNullCheck<T>(debugContext)[0];
+
 
         /// <summary>
         /// <see cref="Component.GetComponents{T}()"/> but with null checking
         /// </summary>
-        /// <returns><see cref="ReturnState.TransformNull"/> | <see cref="ReturnState.Succeed"/> | <see cref="ReturnState.Null"/></returns>
-        public static ReturnState GetComponentsNullCheck<T>(this Component transform, ref T[] results, Object debugContext = null)
-                                                   where T : Component {
-            // Declare Local variable
-            StringBuilder sb;
-
+        public static T[] GetComponentsNullCheck<T>(this Component transform, Object debugContext = null) where T : Component {
             // If the transfrom are null then return
-            if (transform == null)
-            {
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-                sb = StringBuilderPool.Get();
-                sb.Append(SORA_NULL).Append(": <b>transform</b> are null.");
-                sb.AppendLine().AppendLine();
-                // Does this call have debugContext?
-                if (!debugContext) sb.Append(SORA_NULL).Append(": <b>debugContext</b> parameter " + 
-                                                               "were't declared in method call.");
-                Debug.LogError(sb, debugContext);
-                StringBuilderPool.Return(sb);
-#endif
-                return ReturnState.TransformNull;
+            if (!transform) {
+                Debug.LogError($"{SORA_NULL}: <b>transform</b> are null. \n\n", debugContext);
+                return null;
             }
 
             // If successfully assigned then return
             T[] components = transform.GetComponents<T>();
-            if (components.Length > 0)
-            {
-                results = components;
-                return ReturnState.Succeed;
-            }
+            if (components.Length > 0) return components;
 
             // Cant find any T in transform
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            sb = StringBuilderPool.Get();
-            sb.Append(SORA_NULL).Append(": Cant find any <b>");
-            sb.Append(typeof(T).Name).Append("</b>(type) in <b>");
-            sb.Append(transform.name).Append("</b>.");
-            Debug.LogError(sb, transform);
-            StringBuilderPool.Return(sb);
-#endif
-            return ReturnState.Null;
+            Debug.LogError($"{SORA_NULL}: Cant find any <b>{typeof(T).Name}</b>(type) in <b>{transform.name}</b>.", transform);
+            return null;
         }
 
         ///<summary>

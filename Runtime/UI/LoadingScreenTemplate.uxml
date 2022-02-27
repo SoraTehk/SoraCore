@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="root" style="justify-content: center; height: 100%;">
+        <ui:ProgressBar title="Level" name="main-progress" high-value="1" />
+        <ui:ProgressBar title="Sub Levels" name="sub-progress" high-value="1" />
+    </ui:VisualElement>
+</ui:UXML>

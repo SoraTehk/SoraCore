@@ -33,7 +33,7 @@ namespace SoraCore {
         /// https://www.pinvoke.net/default.aspx/user32.SetCursorPos
         /// </summary>
         [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int x, int y);
+        private static extern bool SetCursorPos(int x, int y);
 
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace SoraCore {
             public int Y;
 
             public POINT(int x, int y) {
-                this.X = x;
-                this.Y = y;
+                X = x;
+                Y = y;
             }
             
             //Conversions
@@ -62,11 +62,11 @@ namespace SoraCore {
         /// http://www.pinvoke.net/default.aspx/user32.GetCursorPos
         /// </summary>
         [DllImport("user32.dll")]
-        static extern bool GetCursorPos(out POINT lpPoint);
+        private static extern bool GetCursorPos(out POINT lpPoint);
         #endregion
         
         private void Awake() {
-            transform.GetComponentNullCheck(ref _playerInput);
+            _playerInput = transform.GetComponentNullCheck<PlayerInput>();
         }
 
         #region PlayerInput callbacks

@@ -7,7 +7,7 @@ using UnityEngine.Pool;
 namespace SoraCore.Manager {
     public class GameObjectManager : MonoBehaviour {
         public Dictionary<string, ObjectPool<GameObject>> PrefabPools = new();
-        // Only nested game object in hierarchy when in esditor mode
+        // Only nested game object in hierarchy when in editor mode
 #if UNITY_EDITOR
         public Dictionary<string, Transform> PoolsTransformParent = new();
 #endif

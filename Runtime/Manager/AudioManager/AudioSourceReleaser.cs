@@ -12,7 +12,7 @@ namespace SoraCore.Manager {
         [ReadOnly] public AudioSource AudioSource;
 
         private void Awake() {
-            transform.GetComponentNullCheck(ref AudioSource);
+            AudioSource = transform.GetComponentNullCheck<AudioSource>();
         }
 
         private void Update() {

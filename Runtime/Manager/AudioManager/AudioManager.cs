@@ -72,7 +72,7 @@ namespace SoraCore.Manager {
         public void SetVolume(MixerGroupSO mixerGroup, float value) {
             if (value > 1) Debug.LogWarning(SORA_WARNING + ": <b>" + mixerGroup.Group.name + " value</b> paramater > 1, it could be too loud.");
 
-            // Magic math lol https://www.youtube.com/watch?v=MmWLK9sN3s8
+            // Magic number https://www.youtube.com/watch?v=MmWLK9sN3s8 (6:14)
             float dBValue = Mathf.Log10(Mathf.Max(MIN_VOLUME, value)) * VolumeMultiplier;
             AudioMixer.SetFloat(mixerGroup.VolumeParameter, dBValue);
 
