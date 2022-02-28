@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,12 +8,10 @@ namespace SoraCore.Manager {
 
         public void Raise(AudioSO audio, Vector3 pos) => Raise(audio, pos, audio.audioConfiguration, audio.mixerGroup);
         public void Raise(AudioSO audio, Vector3 pos, AudioConfigurationSO config, MixerGroupSO group) {
-            if (Requested != null)
-            {
+            if (Requested != null) {
                 Requested.Invoke(audio, pos, config, group);
             }
-            else
-            {
+            else {
                 Debug.LogWarning("A sfx playing event was requested, but no AudioManager picked it up.");
             }
         }

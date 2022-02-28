@@ -1,8 +1,8 @@
 namespace SoraCore.Manager {
+    using MyBox;
+    using System;
     using UnityEngine;
     using UnityEngine.UIElements;
-    using System;
-    using MyBox;
 
     public class LoadingUIController : MonoBehaviour, IUIController {
         [field: SerializeField, AutoProperty] public UIDocument Document { get; private set; }

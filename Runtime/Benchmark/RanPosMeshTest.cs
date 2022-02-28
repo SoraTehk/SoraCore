@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using SoraCore;
+using UnityEngine;
 
 public class RanPosMeshTest : BenchmarkableMono {
     public Mesh mesh;

@@ -1,14 +1,14 @@
+using SoraCore.Collections;
+
 namespace SoraCore.Manager {
     using System;
+    using System.Threading.Tasks;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.SceneManagement;
+    using UnityEngine.AddressableAssets;
     using UnityEngine.ResourceManagement.AsyncOperations;
     using UnityEngine.ResourceManagement.ResourceProviders;
-    using UnityEngine.AddressableAssets;
-    using MyBox;
-    using System.Threading.Tasks;
-    using SoraCore.Collections;
 
     using Random = UnityEngine.Random;
 
@@ -18,27 +18,27 @@ namespace SoraCore.Manager {
         Loading
     }
 
-    public class GameManager : MonoBehaviour {
+    public class GameManager : SoraManager {
 
         #region Static -------------------------------------------------------------------------------------------------------
-        private static event Action<LevelSO, bool, bool, bool> _loadSceneRequested;
+        private static Action<LevelSO, bool, bool, bool> _loadSceneRequested;
         public static void LoadLevel(LevelSO sd, bool showLoadingScreen = true, bool fadeScreen = true, bool unloadPrevious = false) {
             if (_loadSceneRequested != null) {
                 _loadSceneRequested.Invoke(sd, showLoadingScreen, fadeScreen, unloadPrevious);
+                return;
             }
-            else {
-                Debug.LogWarning("LoadLevel(...) was requested, but no GameManager picked it up.");
-            }
+
+            LogWarningForEvent(nameof(GameManager));
         }
 
-        private static event Action<GameState> _changeGameStateRequested;
+        private static Action<GameState> _changeGameStateRequested;
         public static void ChangeGameState(GameState gameState) {
             if (_changeGameStateRequested != null) {
                 _changeGameStateRequested.Invoke(gameState);
+                return;
             }
-            else {
-                Debug.LogWarning("ChangeGameState(....) was requested, but no GameManager picked it up.");
-            }
+
+            LogWarningForEvent(nameof(GameManager));
         }
         #endregion
 
@@ -94,7 +94,7 @@ namespace SoraCore.Manager {
         #endregion
 
 
-        // TODO: Loading screen, fade screen, adjust input map, callback when finished
+        // TODO: Fade screen, adjust input map, callback when finished
         private async void InnerLoadLevel(LevelSO ld, bool showLoadingScreen, bool fadeScreen, bool unloadPrevious) {
             // Prevent race condition
             if (_isLoading) return;
@@ -140,7 +140,7 @@ namespace SoraCore.Manager {
 
                 // Add scene to loaded list
                 operation.Completed += obj => _currentlyLoadedScene.Add(assetRef);
-                
+
                 // Update progress bar
                 float mainProgress = (float)(i + 1) / loadingOperationCount;
                 float subProgress = Random.Range(0f, 1f);
@@ -154,7 +154,7 @@ namespace SoraCore.Manager {
             }
 
             UIManager.ShowScreen(UIType.Load, false);
-            
+
             // *Fading in, adjust input*
 
             _isLoading = false;

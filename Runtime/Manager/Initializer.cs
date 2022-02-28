@@ -1,12 +1,11 @@
 namespace SoraCore.Manager {
+    using MyBox;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
     using UnityEngine.ResourceManagement.AsyncOperations;
     using UnityEngine.ResourceManagement.ResourceProviders;
-    using MyBox;
+    using UnityEngine.SceneManagement;
 
-    public class Initializer : MonoBehaviour
-    {
+    public class Initializer : MonoBehaviour {
         [SerializeField] private LevelSO _persistentLevel;
         [SerializeField] private LevelSO _levelToLoad;
 

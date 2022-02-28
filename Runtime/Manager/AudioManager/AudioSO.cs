@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -23,8 +21,10 @@ namespace SoraCore.Manager {
         /// <summary>
         /// Get the next clip (random)
         /// </summary>
-        public AudioClip GetClip {
-            get {
+        public AudioClip GetClip
+        {
+            get
+            {
                 if (audioClips.Length == 1) return audioClips[0];
                 if (audioClips.Length > 1) return audioClips[Random.Range(0, audioClips.Length)];
 

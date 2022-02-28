@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SoraCore {
@@ -50,8 +48,7 @@ namespace SoraCore {
             float[] cumulativeSizes = new float[sizes.Length];
             float total = 0;
 
-            for (int i = 0; i < sizes.Length; i++)
-            {
+            for (int i = 0; i < sizes.Length; i++) {
                 total += sizes[i];
                 cumulativeSizes[i] = total;
             }
@@ -62,10 +59,8 @@ namespace SoraCore {
 
             int triIndex = -1;
 
-            for (int i = 0; i < sizes.Length; i++)
-            {
-                if (randomsample <= cumulativeSizes[i])
-                {
+            for (int i = 0; i < sizes.Length; i++) {
+                if (randomsample <= cumulativeSizes[i]) {
                     triIndex = i;
                     break;
                 }
@@ -82,8 +77,7 @@ namespace SoraCore {
             float r = Random.value;
             float s = Random.value;
 
-            if (r + s >= 1)
-            {
+            if (r + s >= 1) {
                 r = 1 - r;
                 s = 1 - s;
             }
@@ -95,8 +89,7 @@ namespace SoraCore {
         private static float[] GetTriSizes(int[] tris, Vector3[] verts) {
             int triCount = tris.Length / 3;
             float[] sizes = new float[triCount];
-            for (int i = 0; i < triCount; i++)
-            {
+            for (int i = 0; i < triCount; i++) {
                 sizes[i] = .5f * Vector3.Cross(verts[tris[i * 3 + 1]] - verts[tris[i * 3]], verts[tris[i * 3 + 2]] - verts[tris[i * 3]]).magnitude;
             }
             return sizes;

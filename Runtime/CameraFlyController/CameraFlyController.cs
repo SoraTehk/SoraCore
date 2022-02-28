@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using MyBox;
+using SoraCore.Extension;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using SoraCore.Extension;
-using MyBox;
 
 namespace SoraCore {
     public class CameraFlyController : MonoBehaviour {
@@ -48,7 +46,7 @@ namespace SoraCore {
                 X = x;
                 Y = y;
             }
-            
+
             //Conversions
             public static implicit operator System.Drawing.Point(POINT p) => new(p.X, p.Y);
             public static implicit operator POINT(System.Drawing.Point p) => new(p.X, p.Y);
@@ -64,7 +62,7 @@ namespace SoraCore {
         [DllImport("user32.dll")]
         private static extern bool GetCursorPos(out POINT lpPoint);
         #endregion
-        
+
         private void Awake() {
             _playerInput = transform.GetComponentNullCheck<PlayerInput>();
         }
@@ -78,16 +76,15 @@ namespace SoraCore {
         private void FixedUpdate() {
             float sprintMul = 1;
             // Reset sprinting time when the player is not sprinting
-            if (_isSprinting)
-            {
+            if (_isSprinting) {
                 _sprintingTime += Time.fixedDeltaTime;
                 float sprintingTimeNormalized = Mathf.Clamp01(_sprintingTime / _sprintRampingSpeed);
                 // Calculate sprint multiplier
                 sprintMul = _isSprinting ? Mathf.Lerp(_sprintRampingRange.Min,
                                                       _sprintRampingRange.Max,
                                                       sprintingTimeNormalized) : 1;
-            } else
-            {
+            }
+            else {
                 _sprintingTime = 0;
             }
 
@@ -95,8 +92,7 @@ namespace SoraCore {
             transform.Translate(_moveSpeed * sprintMul * Time.fixedDeltaTime * _axesInput, Space.Self);
 
             // Camera panning when holding right-click
-            if (_isPanning)
-            {
+            if (_isPanning) {
                 // Cursor.visible = false;
                 _lastFrameWasPanning = true;
 
@@ -112,15 +108,14 @@ namespace SoraCore {
                 Vector3 outputEulerAngles = (_initLocalRot * (xQuat * yQuat)).eulerAngles;
                 transform.rotation = Quaternion.Euler(outputEulerAngles.x, outputEulerAngles.y, 0);
             }
-            else
-            {
+            else {
                 //Cursor.visible = true;
                 if (_lastFrameWasPanning) {
                     SetCursorPos(_cursorOrigin.X, _cursorOrigin.Y);
                     _lastFrameWasPanning = false;
-                } else
-                {
-                    GetCursorPos(out _cursorOrigin);  
+                }
+                else {
+                    GetCursorPos(out _cursorOrigin);
                 }
 
                 _initLocalRot = transform.rotation;

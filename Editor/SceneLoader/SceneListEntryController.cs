@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-public class SceneListEntryController
-{
+public class SceneListEntryController {
     public Label sceneName { get; private set; }
     public Button openButton { get; private set; }
     public Button addButton { get; private set; }

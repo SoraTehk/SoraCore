@@ -1,14 +1,11 @@
-namespace Sora.EditorTools {
+namespace SoraCore.EditorTools {
     using System.Collections.Generic;
     using System.Linq;
-
-    using UnityEngine;
-    using UnityEngine.UIElements;
-    using UnityEngine.SceneManagement;
-
     using UnityEditor;
-    using UnityEditor.UIElements;
     using UnityEditor.SceneManagement;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+    using UnityEngine.UIElements;
     public class SceneLoader : EditorWindow, IHasCustomMenu {
         public VisualTreeAsset sceneListEntryXML;
         public VisualTreeAsset sceneInfoXML;

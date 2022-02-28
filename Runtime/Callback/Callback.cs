@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+using SoraCore.Extension;
 using System;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
-using SoraCore.Extension;
 
 namespace SoraCore.Callback {
     public enum TimeType {
@@ -16,8 +12,7 @@ namespace SoraCore.Callback {
         Realtime
     }
 
-    public class Callback : IComparable<Callback>, IDeepClone<Callback>
-    {
+    public class Callback : IComparable<Callback>, IDeepClone<Callback> {
         public float Interval { get; }
         public UnityEvent OnCallbackEvent { get; }
         public TimeType TimeType { get; }
@@ -30,7 +25,7 @@ namespace SoraCore.Callback {
             this.OnCallbackEvent = onCallbackEvent;
 
             this.TimeType = timeType;
-            switch(TimeType) {
+            switch (TimeType) {
                 case TimeType.Scaled:
                     StartTime = Time.timeSinceLevelLoad;
                     break;
@@ -59,7 +54,7 @@ namespace SoraCore.Callback {
         //                                  lowest 'EndTime' will be at last index
         public int CompareTo(Callback other) {
             //?This shouldn't happen in CallbackProcessor
-            if(other == null)
+            if (other == null)
                 return 1;
 
             return other.EndTime.CompareTo(EndTime);

@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Audio;
 using MyBox;
+using UnityEngine;
 
 namespace SoraCore.Manager {
     [CreateAssetMenu(fileName = "AudioConfiguration", menuName = "SoraCore/Audio Manager/AudioConfigurationData", order = 52)]

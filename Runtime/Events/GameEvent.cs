@@ -1,12 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 namespace SoraCore {
     [CreateAssetMenu(fileName = "GameEvent", menuName = "SoraCore/Events/GameEvent")]
-    public class GameEvent : ScriptableObject
-    {
+    public class GameEvent : ScriptableObject {
         /// <summary>
         /// The list of listeners that this event will notify if it is 'Invoked'.
         /// </summary>
@@ -15,7 +13,7 @@ namespace SoraCore {
         public void Unregister(GameEventListener listener) => _listeners.Remove(listener);
 
         public void Invoke() {
-            foreach(var listener in _listeners) {
+            foreach (var listener in _listeners) {
                 listener.RaiseEvent();
             }
         }

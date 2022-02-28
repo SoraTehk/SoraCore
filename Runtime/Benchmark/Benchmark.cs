@@ -1,10 +1,8 @@
-using System.Collections;
+using MyBox;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
-using MyBox;
 
 namespace SoraCore {
     public class Benchmark : MonoBehaviour {
@@ -29,10 +27,8 @@ namespace SoraCore {
             Stopwatch stopwatch = new();
 
             // Benchmarkable A
-            if (benchmarkableA)
-            {
-                for (int i = 0; i < executingPerClick; i++)
-                {
+            if (benchmarkableA) {
+                for (int i = 0; i < executingPerClick; i++) {
                     stopwatch.Restart();
                     /// Code here
 
@@ -46,10 +42,8 @@ namespace SoraCore {
             }
 
             // Benchmarkable B
-            if (benchmarkableB)
-            {
-                for (int i = 0; i < executingPerClick; i++)
-                {
+            if (benchmarkableB) {
+                for (int i = 0; i < executingPerClick; i++) {
                     stopwatch.Restart();
                     /// Code here
 

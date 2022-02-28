@@ -1,7 +1,7 @@
 namespace SoraCore.Manager {
+    using MyBox;
     using UnityEngine;
     using UnityEngine.UIElements;
-    using MyBox;
 
     public class GameplayUIController : MonoBehaviour, IUIController {
         [SerializeField] LevelSO _menuLevel;

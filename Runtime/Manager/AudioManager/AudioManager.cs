@@ -1,23 +1,20 @@
-using MyBox;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Audio;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+using static SoraCore.Constant;
 
 namespace SoraCore.Manager {
-    using static SoraCore.Constant;
+    using MyBox;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.Audio;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
+
     public class AudioManager : MonoBehaviour {
         public const float MIN_VOLUME = 0.0001f;
-        [field: SerializeField] public AudioMixer AudioMixer { get;  private set; }
+        [field: SerializeField] public AudioMixer AudioMixer { get; private set; }
         [field: SerializeField] public float VolumeMultiplier { get; private set; } = 30f;
         [SerializeField] private PrefabSO _audioSourcePrefab;
-
-        [Separator("Broadcasting on")]
-        [SerializeField] private GameObjectManagerEventChannelSO _goManagerEC;
 
         [Separator("Listening to")]
         [SerializeField] private PlayAudioEventChannelSO _playAudioEC;
@@ -53,7 +50,7 @@ namespace SoraCore.Manager {
         /// </summary>
         public void Play(AudioSO audio, Vector3 position, AudioConfigurationSO config, MixerGroupSO group) {
             /// Spawn an audio source at target position
-            AudioSource audioSource = _goManagerEC.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
+            AudioSource audioSource = GameObjectManager.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
             audioSource.transform.position = position;
 
             // Apply configuration to the audio source
@@ -110,8 +107,7 @@ namespace SoraCore.Manager {
 
             //Search though project asset folders
             string[] assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(MixerGroupSO).FullName, _mixerGroupFolders);
-            foreach (string assetGUID in assetGUIDs)
-            {
+            foreach (string assetGUID in assetGUIDs) {
                 string path = AssetDatabase.GUIDToAssetPath(assetGUID);
                 MixerGroupSO mixerData = AssetDatabase.LoadAssetAtPath<MixerGroupSO>(path);
                 MixerGroups.Add(mixerData);
@@ -124,8 +120,7 @@ namespace SoraCore.Manager {
 
             //Search though project asset folders
             assetGUIDs = AssetDatabase.FindAssets("t:" + typeof(AudioSO).FullName, _audioFolders);
-            foreach (string assetGUID in assetGUIDs)
-            {
+            foreach (string assetGUID in assetGUIDs) {
                 string path = AssetDatabase.GUIDToAssetPath(assetGUID);
                 Audios.Add(AssetDatabase.LoadAssetAtPath<AudioSO>(path));
             }

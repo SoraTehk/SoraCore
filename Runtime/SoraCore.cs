@@ -1,17 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using System.Text;
-using System.Collections.Concurrent;
-
 namespace SoraCore {
-    public static class Constant {
-        public const char CHAR_SYNCHRONOUS_IDLE = '▬';
-        public const string SORA_NULL = "<b><color=red>[Sora:Null]</color></b>";
-        public const string SORA_LOG = "<b><color=lime>[Sora:Info]</color></b>";
-        public const string SORA_WARNING = "<b><color=yellow>[Sora:Warning]</color></b>";
-    }
+    using System.Text;
+    using System.Collections.Concurrent;
 
     /// <summary>
     /// Simple string builder pool with <see cref="ConcurrentBag{T}"/>
@@ -37,7 +26,7 @@ namespace SoraCore {
         /// Get a <see cref="StringBuilder"/> from the pool
         /// </summary>
         public static StringBuilder Get() {
-            if(!_poolBag.TryTake(out StringBuilder sb)) {
+            if (!_poolBag.TryTake(out StringBuilder sb)) {
                 sb = new StringBuilder(CAPACITY);
             }
 

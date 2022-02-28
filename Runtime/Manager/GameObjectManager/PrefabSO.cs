@@ -1,15 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using MyBox;
-
+namespace SoraCore.Manager {
+    using UnityEngine;
+    using MyBox;
 #if UNITY_EDITOR
-using UnityEditor;
+    using UnityEditor;
+    public partial class PrefabSO : ScriptableObject {
+        void OnValidate() {
+            if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(GetInstanceID(), out string assetguid, out long _)) {
+                AssetGuid = assetguid;
+            }
+        }
+
+    }
 #endif
 
-namespace SoraCore.Manager {
-    [CreateAssetMenu(fileName = "PrefabData", menuName = "SoraCore/GameObject Manager/PrefabData")]
-    public class PrefabSO : ScriptableObject {
+    [CreateAssetMenu(fileName = "PrefabData", menuName = "SoraCore/GameObject Manager/Prefab Data")]
+    public partial class PrefabSO : ScriptableObject {
         [ReadOnly] public string AssetGuid;
         [Space(20)]
         public GameObject prefab;
@@ -19,19 +24,10 @@ namespace SoraCore.Manager {
 
         // Inherit this class and override these 3 for specific needs
         #region ObjectPool<T> delegate methods
-        public virtual void OnGameObjGet(GameObject gObj) { }
+        public virtual void OnGameObjGet(GameObject gObj) => gObj.SetActive(true);
         public virtual void OnGameObjRelease(GameObject gObj) => gObj.SetActive(false);
         public virtual void OnGameObjDestroy(GameObject gObj) => Destroy(gObj);
         #endregion
-
-#if UNITY_EDITOR
-        void OnValidate() {
-            if(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(GetInstanceID(), out string assetguid, out long _))
-            {
-                AssetGuid = assetguid;
-            }
-        }
-#endif
     }
 }
 

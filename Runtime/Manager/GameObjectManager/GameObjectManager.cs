@@ -1,90 +1,114 @@
-using MyBox;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Pool;
-
 namespace SoraCore.Manager {
-    public class GameObjectManager : MonoBehaviour {
-        public Dictionary<string, ObjectPool<GameObject>> PrefabPools = new();
-        // Only nested game object in hierarchy when in editor mode
-#if UNITY_EDITOR
-        public Dictionary<string, Transform> PoolsTransformParent = new();
-#endif
+    using System;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.Pool;
 
-        [Separator("Listening to")]
-        [SerializeField] private GameObjectManagerEventChannelSO _goManagerEC;
-
-        private void OnEnable() {
-            _goManagerEC.InstantiateRequested += Get;
-            _goManagerEC.DestroyRequested += Release;
-        }
-
-        private void OnDisable() {
-            _goManagerEC.InstantiateRequested -= Get;
-            _goManagerEC.DestroyRequested -= Release;
-        }
-
+    public class GameObjectManager : SoraManager {
+        #region Static -------------------------------------------------------------------------------------------------------
+        private static Func<PrefabSO, GameObject> _instantiateRequested;
         /// <summary>
-        /// Return an <see cref="GameObject"/> base on <paramref name="pd"/>
+        /// Return an <see cref="GameObject"/> base on <paramref name="pd"/>.
         /// </summary>
-        public GameObject Get(PrefabSO pd) {
-            // Return an object from the pool if marked as poolable
-            if (TryCreatePool(pd))
-            {
-                // Return an object from the pool
-                GameObject gObj = PrefabPools[pd.AssetGuid].Get();
+        public static GameObject Instantiate(PrefabSO pd) {
+            if (_instantiateRequested != null) return _instantiateRequested.Invoke(pd);
 
-                // Only nested game object in hierarchy when in editor mode
-#if UNITY_EDITOR
-                gObj.transform.parent = PoolsTransformParent[pd.AssetGuid];
-#endif
-
-                gObj.SetActive(true);
-                return gObj;
-            }
-            return Instantiate(pd.prefab);
+            LogWarningForEvent(nameof(GameObjectManager));
+            return null;
         }
 
-
+        private static Action<GameObject> _destroyRequested;
         /// <summary>
-        /// Destroy <paramref name="gObj"/> or release it to the <paramref name="pd"/> pool
+        /// Destroy <paramref name="gObj"/> base on it <see cref="PrefabSO"/> settings.
         /// </summary>
-        public void Release(GameObject gObj, PrefabSO pd) {
-            if (TryCreatePool(pd))
-            {
-                PrefabPools[pd.AssetGuid].Release(gObj);
+        public static void Destroy(GameObject gObj) {
+            if (_destroyRequested != null) {
+                _destroyRequested.Invoke(gObj);
                 return;
             }
 
-            Destroy(gObj);
+            LogWarningForEvent(nameof(GameObjectManager));
+        }
+        #endregion
+
+
+        private readonly Dictionary<int, PrefabSO> _instanceIDToPrefabData = new();
+        private readonly Dictionary<PrefabSO, ObjectPool<GameObject>> _prefabDataToPool = new();
+#if UNITY_EDITOR
+        // Only nested game object in hierarchy when in editor mode
+        public Dictionary<ObjectPool<GameObject>, Transform> _poolToParentTransform = new();
+#endif
+
+        private void OnEnable() {
+            _instantiateRequested += Get;
+            _destroyRequested += Release;
         }
 
-        /// <summary>
-        /// Return true if marked as poolable
-        /// </summary>
-        private bool TryCreatePool(PrefabSO pd) {
-            if (pd.enablePooling)
-            {
+        private void OnDisable() {
+            _instantiateRequested -= Get;
+            _destroyRequested -= Release;
+        }
+
+        private GameObject Get(PrefabSO pd) {
+            // Return an object from the pool if marked as poolable
+            if (TryGetOrCreatePool(pd)) {
+                // Return an object from the pool
+                ObjectPool<GameObject> pool = _prefabDataToPool[pd];
+                GameObject gObj = pool.Get();
+
+#if UNITY_EDITOR
+                // Only nested game object in hierarchy when in editor mode
+                gObj.transform.parent = _poolToParentTransform[pool];
+#endif
+
+                return gObj;
+            }
+
+            return Instantiate(pd.prefab);
+        }
+
+        private void Release(GameObject gObj) {
+            // Does this game object spawned by the system
+            if (_instanceIDToPrefabData.TryGetValue(gObj.GetInstanceID(), out PrefabSO pd)) {
+                if (TryGetOrCreatePool(pd)) {
+                    _prefabDataToPool[pd].Release(gObj);
+                    return;
+                }
+            }
+            else {
+                SoraCore.LogWarning($"You are trying to destroy an object which are not created by the system", nameof(GameObjectManager), gObj);
+            }
+
+            UnityEngine.Object.Destroy(gObj);
+        }
+
+        private bool TryGetOrCreatePool(PrefabSO pd) {
+            // If marked as poolable
+            if (pd.enablePooling) {
                 // If key not found then..
-                if (!PrefabPools.ContainsKey(pd.AssetGuid))
-                {
+                if (!_prefabDataToPool.ContainsKey(pd)) {
                     // ..create pool
-                    var pool = new ObjectPool<GameObject>(() => Instantiate(pd.prefab),
-                                                          pd.OnGameObjGet,
-                                                          pd.OnGameObjRelease,
-                                                          pd.OnGameObjDestroy,
-                                                          true,
-                                                          pd.preload,
-                                                          pd.capacity);
+                    var pool = new ObjectPool<GameObject>(() =>
+                        {
+                            var instance = Instantiate(pd.prefab);
+                            _instanceIDToPrefabData[instance.GetInstanceID()] = pd;
+
+                            return instance;
+                        },
+                        pd.OnGameObjGet,
+                        pd.OnGameObjRelease,
+                        pd.OnGameObjDestroy,
+                        true,
+                        pd.preload,
+                        pd.capacity);
                     // Add newly created pool to the list
-                    PrefabPools.Add(pd.AssetGuid, pool);
+                    _prefabDataToPool[pd] = pool;
 
                     // Only nested game object in hierarchy when in editor mode
 #if UNITY_EDITOR
                     Transform poolTransformParent = new GameObject(pd.prefab.name).transform;
                     poolTransformParent.parent = transform;
-                    PoolsTransformParent.Add(pd.AssetGuid, poolTransformParent);
+                    _poolToParentTransform[pool] = poolTransformParent;
 #endif
                 }
 

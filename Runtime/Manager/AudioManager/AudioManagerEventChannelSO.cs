@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,23 +11,19 @@ namespace SoraCore.Manager {
         public event UnityAction LoadPlayerPrefsAllRequested;
 
         public void SetVolume(MixerGroupSO group, float value) {
-            if (SetVolumeRequested != null)
-            {
+            if (SetVolumeRequested != null) {
                 SetVolumeRequested.Invoke(group, value);
             }
-            else
-            {
+            else {
                 Debug.LogWarning("An set volume event was requested, but no AudioManager picked it up.");
             }
         }
 
         public void SavePlayerPrefs(MixerGroupSO group, float value) {
-            if (SavePlayerPrefsRequested != null)
-            {
+            if (SavePlayerPrefsRequested != null) {
                 SavePlayerPrefsRequested.Invoke(group, value);
             }
-            else
-            {
+            else {
                 Debug.LogWarning("A save mixer volume to PlayerPrefs event was requested, but no AudioManager picked it up.");
             }
         }
@@ -40,12 +34,10 @@ namespace SoraCore.Manager {
             return 1f;
         }
         public void LoadPlayerPrefsAll() {
-            if (LoadPlayerPrefsAllRequested != null)
-            {
+            if (LoadPlayerPrefsAllRequested != null) {
                 LoadPlayerPrefsAllRequested.Invoke();
             }
-            else
-            {
+            else {
                 Debug.LogWarning("A load all from PlayerPrefs and set volume event was requested, but no AudioManager picked it up.");
             }
         }

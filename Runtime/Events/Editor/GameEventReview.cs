@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEditor;  
 
 namespace SoraCore {
     [CustomEditor(typeof(GameEvent), editorForChildClasses: true)]
-    public class GameEventReviewEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
+    public class GameEventReviewEditor : Editor {
+        public override void OnInspectorGUI() {
             base.OnInspectorGUI();
 
             GUI.enabled = Application.isPlaying;

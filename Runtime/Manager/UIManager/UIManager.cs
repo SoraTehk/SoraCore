@@ -1,8 +1,7 @@
 namespace SoraCore.Manager {
-    using UnityEngine;
-    using UnityEngine.UIElements;
-    using System;
     using MyBox;
+    using System;
+    using UnityEngine;
 
     public enum UIType {
         Menu,
@@ -11,27 +10,26 @@ namespace SoraCore.Manager {
         Inventory
     }
 
-    public class UIManager : MonoBehaviour
-    {
+    public class UIManager : SoraManager {
         #region Static -------------------------------------------------------------------------------------------------------
-        private static event Action<UIType, bool> _showScreenRequested;
+        private static Action<UIType, bool> _showScreenRequested;
         public static void ShowScreen(UIType type, bool value = true) {
 
             if (_showScreenRequested != null) {
                 _showScreenRequested.Invoke(type, value);
+                return;
             }
-            else {
-                Debug.LogWarning("ShowScreen(...) was requested but no UIManager picked it up");
-            }
+
+            LogWarningForEvent(nameof(UIManager));
         }
-        private static event Action<float, float> _updateLoadScreenRequested;
+        private static Action<float, float> _updateLoadScreenRequested;
         public static void UpdateLoadScreen(float main, float sub) {
             if (_updateLoadScreenRequested != null) {
                 _updateLoadScreenRequested.Invoke(main, sub);
+                return;
             }
-            else {
-                Debug.LogWarning("ShowLoadScreen(...) was requested but no UIManager picked it up");
-            }
+
+            LogWarningForEvent(nameof(UIManager));
         }
         #endregion
 
@@ -57,7 +55,7 @@ namespace SoraCore.Manager {
         }
 
         private void InnerShowScreen(UIType type, bool value) {
-            switch(type) {
+            switch (type) {
                 case UIType.Menu:
                     _menuUIController.ShowUI(value);
                     break;
@@ -73,7 +71,7 @@ namespace SoraCore.Manager {
         }
 
 
-    private void InnerUpdateLoadScreen(float main, float sub) {
+        private void InnerUpdateLoadScreen(float main, float sub) {
             _loadingUIController.MainProgress = main;
             _loadingUIController.SubProgress = sub;
         }

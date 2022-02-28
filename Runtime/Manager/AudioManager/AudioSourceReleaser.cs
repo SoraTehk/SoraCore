@@ -1,24 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using MyBox;
 using SoraCore.Extension;
 
 namespace SoraCore.Manager {
-    public class AudioSourceReleaser : MonoBehaviour
-    {
-        [SerializeField] private PrefabSO _prefabData;
-        [SerializeField] private GameObjectManagerEventChannelSO _goManagerEC;
-        [ReadOnly] public AudioSource AudioSource;
-
-        private void Awake() {
-            AudioSource = transform.GetComponentNullCheck<AudioSource>();
-        }
+    using MyBox;
+    using UnityEngine;
+    public class AudioSourceReleaser : MonoBehaviour {
+        [field: SerializeField, AutoProperty] private AudioSource _audioSource;
 
         private void Update() {
-            if(AudioListener.pause || AudioSource.isPlaying) return;
+            if (AudioListener.pause || _audioSource.isPlaying) return;
 
-            _goManagerEC.Destroy(gameObject, _prefabData);
+            GameObjectManager.Destroy(gameObject);
         }
     }
 }
