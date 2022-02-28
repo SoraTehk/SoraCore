@@ -45,4 +45,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _persistentScene: {fileID: 11400000, guid: 19dc326b584ba0c4bac1b7715b61096d, type: 2}
-  _audioManagerEC: {fileID: 11400000, guid: 66d3efb53c8b5a9428488d7dc2893397, type: 2}

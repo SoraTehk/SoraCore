@@ -2,6 +2,7 @@ using static SoraCore.Constant;
 
 namespace SoraCore.Manager {
     using MyBox;
+    using System;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.Audio;
@@ -10,15 +11,63 @@ namespace SoraCore.Manager {
     using UnityEditor;
 #endif
 
-    public class AudioManager : MonoBehaviour {
+    public class AudioManager : SoraManager {
+        #region Static -------------------------------------------------------------------------------------------------------
+        private static Action<AudioSO, Vector3, AudioConfigurationSO, MixerGroupSO> _playAudioRequested;
+        public static void PlayAudio(AudioSO audio, Vector3 pos) => PlayAudio(audio, pos, audio.audioConfiguration, audio.mixerGroup);
+        public static void PlayAudio(AudioSO audio, Vector3 pos, AudioConfigurationSO config, MixerGroupSO group) {
+            if (_playAudioRequested != null) {
+                _playAudioRequested.Invoke(audio, pos, config, group);
+                return;
+            }
+
+            LogWarningForEvent(nameof(AudioManager));
+        }
+
+        private static Action<MixerGroupSO, float> _setVolumeRequested;
+        public static void SetVolume(MixerGroupSO group, float value) {
+            if (_setVolumeRequested != null) {
+                _setVolumeRequested.Invoke(group, value);
+                return;
+            }
+
+            LogWarningForEvent(nameof(AudioManager));
+        }
+
+        private static Action<MixerGroupSO, float> _savePlayerPrefsRequested;
+        public static void SavePlayerPrefs(MixerGroupSO group, float value) {
+            if (_savePlayerPrefsRequested != null) {
+                _savePlayerPrefsRequested.Invoke(group, value);
+                return;
+            }
+
+            LogWarningForEvent(nameof(AudioManager));
+        }
+
+        private static Func<MixerGroupSO, float> _loadPlayerPrefsRequested;
+        public static float LoadPlayerPrefs(MixerGroupSO group) {
+            if (_loadPlayerPrefsRequested != null) return _loadPlayerPrefsRequested.Invoke(group);
+
+            LogWarningForEvent(nameof(AudioManager));
+            return 1f;
+        }
+
+        private static Action _loadPlayerPrefsAllRequested;
+        public static void LoadPlayerPrefsAll() {
+            if (_loadPlayerPrefsAllRequested != null) {
+                _loadPlayerPrefsAllRequested.Invoke();
+                return;
+            }
+
+            LogWarningForEvent(nameof(AudioManager));
+        }
+        #endregion
+
+
         public const float MIN_VOLUME = 0.0001f;
         [field: SerializeField] public AudioMixer AudioMixer { get; private set; }
         [field: SerializeField] public float VolumeMultiplier { get; private set; } = 30f;
         [SerializeField] private PrefabSO _audioSourcePrefab;
-
-        [Separator("Listening to")]
-        [SerializeField] private PlayAudioEventChannelSO _playAudioEC;
-        [SerializeField] private AudioManagerEventChannelSO _audioManagerEC;
 
         [field: Separator("Data")]
         [field: SerializeField] public List<MixerGroupSO> MixerGroups { get; private set; }
@@ -30,25 +79,28 @@ namespace SoraCore.Manager {
 #endif
 
         private void OnEnable() {
-            _playAudioEC.Requested += Play;
-            _audioManagerEC.SetVolumeRequested += SetVolume;
-            _audioManagerEC.SavePlayerPrefsRequested += SavePlayerPrefs;
-            _audioManagerEC.LoadPlayerPrefsRequested += LoadPlayerPrefs;
-            _audioManagerEC.LoadPlayerPrefsAllRequested += LoadPlayerPrefsAll;
+            _playAudioRequested += InnerPlayAudio;
+
+
+            _setVolumeRequested += InnerSetVolume;
+            _savePlayerPrefsRequested += InnerSavePlayerPrefs;
+            _loadPlayerPrefsRequested += InnerLoadPlayerPrefs;
+            _loadPlayerPrefsAllRequested += InnerLoadPlayerPrefsAll;
         }
 
         private void OnDisable() {
-            _playAudioEC.Requested -= Play;
-            _audioManagerEC.SetVolumeRequested -= SetVolume;
-            _audioManagerEC.SavePlayerPrefsRequested -= SavePlayerPrefs;
-            _audioManagerEC.LoadPlayerPrefsRequested -= LoadPlayerPrefs;
-            _audioManagerEC.LoadPlayerPrefsAllRequested -= LoadPlayerPrefsAll;
+            _playAudioRequested -= InnerPlayAudio;
+
+            _setVolumeRequested -= InnerSetVolume;
+            _savePlayerPrefsRequested -= InnerSavePlayerPrefs;
+            _loadPlayerPrefsRequested -= InnerLoadPlayerPrefs;
+            _loadPlayerPrefsAllRequested -= InnerLoadPlayerPrefsAll;
         }
 
         /// <summary>
         /// Spawn an <see cref="AudioSource"/> that play <paramref name="audio"/> at <paramref name="position"/> using custom configuration
         /// </summary>
-        public void Play(AudioSO audio, Vector3 position, AudioConfigurationSO config, MixerGroupSO group) {
+        private void InnerPlayAudio(AudioSO audio, Vector3 position, AudioConfigurationSO config, MixerGroupSO group) {
             /// Spawn an audio source at target position
             AudioSource audioSource = GameObjectManager.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
             audioSource.transform.position = position;
@@ -66,7 +118,7 @@ namespace SoraCore.Manager {
         /// <summary>
         /// Change dB volume of <paramref name="mixerGroup"/> base on <paramref name="value"/>
         /// </summary>
-        public void SetVolume(MixerGroupSO mixerGroup, float value) {
+        public void InnerSetVolume(MixerGroupSO mixerGroup, float value) {
             if (value > 1) Debug.LogWarning(SORA_WARNING + ": <b>" + mixerGroup.Group.name + " value</b> paramater > 1, it could be too loud.");
 
             // Magic number https://www.youtube.com/watch?v=MmWLK9sN3s8 (6:14)
@@ -76,10 +128,10 @@ namespace SoraCore.Manager {
             return;
         }
 
-        public void SavePlayerPrefs(MixerGroupSO mixerGroup, float value) {
+        public void InnerSavePlayerPrefs(MixerGroupSO mixerGroup, float value) {
             PlayerPrefs.SetFloat("AudioManager" + mixerGroup.VolumeParameter, value);
         }
-        public float LoadPlayerPrefs(MixerGroupSO mixerGroup) {
+        public float InnerLoadPlayerPrefs(MixerGroupSO mixerGroup) {
             if (!mixerGroup) return 1f;
 
             // TODO: Handle save/load more clearly
@@ -90,7 +142,7 @@ namespace SoraCore.Manager {
         /// <summary>
         /// Load & set all PlayerPrefs
         /// </summary>
-        public void LoadPlayerPrefsAll() {
+        public void InnerLoadPlayerPrefsAll() {
             foreach (MixerGroupSO mixerGroup in MixerGroups)
                 SetVolume(mixerGroup, LoadPlayerPrefs(mixerGroup));
         }

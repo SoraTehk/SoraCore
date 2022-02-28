@@ -1,7 +1,7 @@
 using SoraCore;
 using UnityEngine;
 
-public class RanPosMeshTest : BenchmarkableMono {
+public class RanPosMeshTest : Benchmarkable {
     public Mesh mesh;
     public override void Action() {
         Vector3 ranPos = Math.GetRandomPointOnMesh(mesh);

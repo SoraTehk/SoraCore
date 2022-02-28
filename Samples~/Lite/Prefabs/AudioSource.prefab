@@ -45,9 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2352b55249eaf454583ab2efb334e8d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefabData: {fileID: 11400000, guid: bdafe1ced9e0d0742a77ba584faa29bf, type: 2}
-  _goManagerEC: {fileID: 11400000, guid: 0b0a52e88e09ab64cac701c59aa5c23d, type: 2}
-  AudioSource: {fileID: 0}
+  _audioSource: {fileID: 7429353264184000562}
 --- !u!82 &7429353264184000562
 AudioSource:
   m_ObjectHideFlags: 0
@@ -59,7 +57,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
