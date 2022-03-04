@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a005476ef08cf384cbd7789f0eb5f81d, type: 3}
+  m_Name: Audio_BulletShootSFX
+  m_EditorClassIdentifier: 
+  audioConfiguration: {fileID: 11400000, guid: 2abf1c9b76443324c9a92842b7a5708f, type: 2}
+  mixerGroup: {fileID: 11400000, guid: 2f7fa23c7f20f894c92f96736a77a046, type: 2}
+  Loop: 0
+  sequenceMode: 1
+  audioClips:
+  - {fileID: 8300000, guid: 947d25987ee32e54f995ce139280c983, type: 3}
+  - {fileID: 8300000, guid: 0c5bd60ad40d0cc4ea65aada97296c29, type: 3}
+  - {fileID: 8300000, guid: b29a7335ee204b74e926648befcb9c18, type: 3}

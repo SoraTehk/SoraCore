@@ -1,9 +1,9 @@
 {
     "name": "com.huysora.soracore",
-    "version": "1.3.7",
+    "version": "1.3.8",
     "displayName": "SoraCore",
     "description": "Unity Package for my repeatable needs",
-    "unity": "2021.3",
+    "unity": "2021.2",
     "documentationUrl": "https://github.com/HuySora/SoraCore",
     "changelogUrl": "https://github.com/HuySora/SoraCore",
     "licensesUrl": "https://github.com/HuySora/SoraCore",
@@ -21,9 +21,9 @@
     },
     "samples": [
         {
-            "displayName": "SoraCore Lite",
-            "description": "Contains setup for SoraCore uses",
-            "path": "Samples~/Lite"
+            "displayName": "Import Me",
+            "description": "Contains simple setup for SoraCore uses",
+            "path": "Samples~/ImportMe"
         }
     ]
 }

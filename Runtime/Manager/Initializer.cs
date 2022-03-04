@@ -1,6 +1,8 @@
 namespace SoraCore.Manager {
     using MyBox;
     using UnityEngine;
+    using UnityEngine.AddressableAssets;
+    using UnityEngine.AddressableAssets.ResourceLocators;
     using UnityEngine.ResourceManagement.AsyncOperations;
     using UnityEngine.ResourceManagement.ResourceProviders;
     using UnityEngine.SceneManagement;

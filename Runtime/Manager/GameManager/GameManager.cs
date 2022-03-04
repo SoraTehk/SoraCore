@@ -18,6 +18,11 @@ namespace SoraCore.Manager {
         Loading
     }
 
+    public enum LevelLoadType {
+        Head,
+        Tail
+    }
+
     public class GameManager : SoraManager {
 
         #region Static -------------------------------------------------------------------------------------------------------
@@ -42,6 +47,8 @@ namespace SoraCore.Manager {
         }
         #endregion
 
+        [field: SerializeField] public LevelLoadType LevelLoadType { get; private set; } = LevelLoadType.Tail;
+
         [Range(1, 600)]
         public int TargetFPS = 600;
 
@@ -50,7 +57,7 @@ namespace SoraCore.Manager {
 
 
         // Parameters from scene loading requests
-        private readonly UniqueQueue<AssetReference> _scenesToLoad = new();
+        private readonly UniqueLinkedList<AssetReference> _scenesToLoad = new();
         private readonly List<AssetReference> _currentlyLoadedScene = new();
         private bool _isLoading;
 
@@ -104,8 +111,9 @@ namespace SoraCore.Manager {
 
             UIManager.ShowScreen(UIType.Load, showLoadingScreen);
 
-            // Populating levels queue with recursive function as head first
-            _scenesToLoad.Enqueue(ld.sceneReference);
+            // Populating levels linked list with recursive function as head first
+            _scenesToLoad.AddLast(ld.sceneReference);
+
             AddLevelToQueue(ld);
 
             // TODO: Fix pooling system on unload
@@ -133,13 +141,20 @@ namespace SoraCore.Manager {
                 // UNDONE: Removeable
                 await Task.Delay(500);
 
-                // Dequeue & start loading scene asynchronously
-                AssetReference assetRef = _scenesToLoad.Dequeue();
-                AsyncOperationHandle<SceneInstance> operation = assetRef.LoadSceneAsync(LoadSceneMode.Additive, true, 0);
-                tasks[i] = operation.Task;
+                // Consume the linked list depend on load type
+                AssetReference assetRef = LevelLoadType switch
+                {
+                    LevelLoadType.Head => _scenesToLoad.ConsumeFirst(),
+                    LevelLoadType.Tail => _scenesToLoad.ConsumeLast(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(LevelLoadType), $"Undefined enum value of {nameof(LevelLoadType)}"),
+                };
 
-                // Add scene to loaded list
+                // Loading the scene
+                AsyncOperationHandle<SceneInstance> operation = assetRef.LoadSceneAsync(LoadSceneMode.Additive, true, 0);
                 operation.Completed += obj => _currentlyLoadedScene.Add(assetRef);
+
+                // Use task to track
+                tasks[i] = operation.Task;
 
                 // Update progress bar
                 float mainProgress = (float)(i + 1) / loadingOperationCount;
@@ -162,7 +177,7 @@ namespace SoraCore.Manager {
             #region Local Functions
             void AddLevelToQueue(LevelSO input) {
                 foreach (var level in input.subLevels) {
-                    _scenesToLoad.Enqueue(level.sceneReference);
+                    _scenesToLoad.AddLast(level.sceneReference);
                 }
 
                 foreach (var level in input.subLevels) {

@@ -21,13 +21,13 @@ namespace SoraCore.Manager {
         [SerializeField] private AssetReferenceT<SceneAsset> _editorSceneReference;
 
         private void OnValidate() {
-            sceneReference = _editorSceneReference;
+            //sceneReference = _editorSceneReference;
         }
     }
 #endif
 
     public partial class LevelSO : ScriptableObject {
-        [HideInInspector] public AssetReference sceneReference;
+        public AssetReference sceneReference;
         [field: SerializeField] public List<PrefabSO> PreloadPrefabList { get; private set; }
         public List<LevelSO> subLevels;
     }
