@@ -12,7 +12,7 @@ namespace SoraCore.Manager {
         [SerializeField] private LevelSO _levelToLoad;
 
         private void Awake() {
-            _persistentLevel.sceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += OnPersistentLevelLoaded;
+            _persistentLevel.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += OnPersistentLevelLoaded;
         }
 
         private void OnPersistentLevelLoaded(AsyncOperationHandle<SceneInstance> obj) {
@@ -20,7 +20,7 @@ namespace SoraCore.Manager {
             SceneManager.UnloadSceneAsync(0);
 
             AudioManager.LoadPlayerPrefsAll();
-            GameManager.LoadLevel(_levelToLoad);
+            LevelManager.LoadLevel(_levelToLoad);
         }
     }
 }

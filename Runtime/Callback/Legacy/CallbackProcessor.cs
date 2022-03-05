@@ -126,6 +126,8 @@ namespace SoraCore.Callback {
         public void Add(Callback callback, Object debugContext)
             => Add(callback, true, debugContext);
         public void Add(Callback callback, bool sortAndUpdate = true, Object debugContext = null) {
+
+
             if (callback.OnCallbackEvent == null) {
                 Debug.LogWarning(SORA_WARNING + ": Callback event are null!", debugContext);
                 if (debugContext == null)

@@ -70,11 +70,9 @@ namespace SoraCore.Manager {
             }
         }
 
-
         private void InnerUpdateLoadScreen(float main, float sub) {
             _loadingUIController.MainProgress = main;
             _loadingUIController.SubProgress = sub;
         }
-
     }
 }

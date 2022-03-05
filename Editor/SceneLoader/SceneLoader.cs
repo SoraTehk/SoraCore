@@ -6,6 +6,7 @@ namespace SoraCore.EditorTools {
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UIElements;
+
     public class SceneLoader : EditorWindow, IHasCustomMenu {
         public VisualTreeAsset sceneListEntryXML;
         public VisualTreeAsset sceneInfoXML;
@@ -13,7 +14,7 @@ namespace SoraCore.EditorTools {
         private TwoPaneSplitView _splitView;
         private TemplateContainer _rightPane;
 
-        //[MenuItem("Tools/SoraCore/" + nameof(SceneLoader))]
+        [MenuItem("Tools/SoraCore/" + nameof(SceneLoader))]
         public static void ShowWindow() {
             SceneLoader window = GetWindow<SceneLoader>();
             window.titleContent = new GUIContent(nameof(SceneLoader));

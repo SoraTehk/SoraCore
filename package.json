@@ -1,6 +1,6 @@
 {
     "name": "com.huysora.soracore",
-    "version": "1.3.8",
+    "version": "1.4.8",
     "displayName": "SoraCore",
     "description": "Unity Package for my repeatable needs",
     "unity": "2021.2",
@@ -8,7 +8,7 @@
     "changelogUrl": "https://github.com/HuySora/SoraCore",
     "licensesUrl": "https://github.com/HuySora/SoraCore",
     "dependencies": {
-        "com.unity.addressables": "1.19.15",
+        "com.unity.addressables": "1.19.18",
         "com.unity.inputsystem": "1.2.0",
         "com.unity.cinemachine": "2.8.4",
         "com.domybest.mybox": "1.7.0"

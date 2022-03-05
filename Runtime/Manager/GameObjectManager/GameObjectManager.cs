@@ -6,7 +6,10 @@ namespace SoraCore.Manager {
 
     public class GameObjectManager : SoraManager {
         #region Static -------------------------------------------------------------------------------------------------------
+
         private static Func<PrefabSO, GameObject> _instantiateRequested;
+        private static Action<GameObject> _destroyRequested;
+
         /// <summary>
         /// Return an <see cref="GameObject"/> base on <paramref name="pd"/>.
         /// </summary>
@@ -17,7 +20,6 @@ namespace SoraCore.Manager {
             return null;
         }
 
-        private static Action<GameObject> _destroyRequested;
         /// <summary>
         /// Destroy <paramref name="gObj"/> base on it <see cref="PrefabSO"/> settings.
         /// </summary>
@@ -29,8 +31,8 @@ namespace SoraCore.Manager {
 
             LogWarningForEvent(nameof(GameObjectManager));
         }
-        #endregion
 
+        #endregion
 
         private readonly Dictionary<int, PrefabSO> _instanceIDToPrefabData = new();
         private readonly Dictionary<PrefabSO, ObjectPool<GameObject>> _prefabDataToPool = new();
@@ -50,72 +52,78 @@ namespace SoraCore.Manager {
         }
 
         private GameObject Get(PrefabSO pd) {
-            // Return an object from the pool if marked as poolable
+            GameObject gObj;
+
             if (TryGetOrCreatePool(pd)) {
                 // Return an object from the pool
                 ObjectPool<GameObject> pool = _prefabDataToPool[pd];
-                GameObject gObj = pool.Get();
+                gObj = pool.Get();
 
 #if UNITY_EDITOR
                 // Only nested game object in hierarchy when in editor mode
                 gObj.transform.parent = _poolToParentTransform[pool];
 #endif
-
-                return gObj;
+            }
+            else {
+                // Instantiate normal object as it not marked as poolable
+                gObj = Instantiate(pd.prefab);
+                _instanceIDToPrefabData[gObj.GetInstanceID()] = pd;
+                pd.OnGameObjGet(gObj);
             }
 
-            return Instantiate(pd.prefab);
+            return gObj;
         }
 
         private void Release(GameObject gObj) {
             // Does this game object spawned by the system
-            if (_instanceIDToPrefabData.TryGetValue(gObj.GetInstanceID(), out PrefabSO pd)) {
-                if (TryGetOrCreatePool(pd)) {
-                    _prefabDataToPool[pd].Release(gObj);
-                    return;
-                }
-            }
-            else {
-                SoraCore.LogWarning($"You are trying to destroy an object which are not created by the system", nameof(GameObjectManager), gObj);
+            if (!_instanceIDToPrefabData.TryGetValue(gObj.GetInstanceID(), out PrefabSO pd)) {
+                SoraCore.LogWarning($"You are trying to destroy an object which are not created by the system, no callback will be processed!", nameof(GameObjectManager), gObj);
+                UnityEngine.Object.Destroy(gObj);
+                return;
             }
 
-            UnityEngine.Object.Destroy(gObj);
+            if (TryGetOrCreatePool(pd)) {
+                _prefabDataToPool[pd].Release(gObj);
+            }
+            else {
+                pd.OnGameObjRelease(gObj);
+                pd.OnGameObjDestroy(gObj);
+            }
         }
 
         private bool TryGetOrCreatePool(PrefabSO pd) {
-            // If marked as poolable
-            if (pd.enablePooling) {
-                // If key not found then..
-                if (!_prefabDataToPool.ContainsKey(pd)) {
-                    // ..create pool
-                    var pool = new ObjectPool<GameObject>(() =>
-                        {
-                            var instance = Instantiate(pd.prefab);
-                            _instanceIDToPrefabData[instance.GetInstanceID()] = pd;
+            // Return false if not poolable
+            if (!pd.enablePooling) return false;
 
-                            return instance;
-                        },
-                        pd.OnGameObjGet,
-                        pd.OnGameObjRelease,
-                        pd.OnGameObjDestroy,
-                        true,
-                        pd.preload,
-                        pd.capacity);
-                    // Add newly created pool to the list
-                    _prefabDataToPool[pd] = pool;
+            // If key not found then..
+            if (!_prefabDataToPool.ContainsKey(pd)) {
+                // ..create pool
+                var pool = new ObjectPool<GameObject>(() =>
+                {
+                    var instance = Instantiate(pd.prefab);
+                    _instanceIDToPrefabData[instance.GetInstanceID()] = pd;
 
-                    // Only nested game object in hierarchy when in editor mode
+                    return instance;
+                },
+                    pd.OnGameObjGet,
+                    pd.OnGameObjRelease,
+                    pd.OnGameObjDestroy,
+                    true,
+                    pd.preload,
+                    pd.capacity);
+
+                // Add newly created pool to the dict
+                _prefabDataToPool[pd] = pool;
+
+                // Only nested game object in hierarchy when in editor mode
 #if UNITY_EDITOR
-                    Transform poolTransformParent = new GameObject(pd.prefab.name).transform;
-                    poolTransformParent.parent = transform;
-                    _poolToParentTransform[pool] = poolTransformParent;
+                Transform poolTransformParent = new GameObject(pd.prefab.name).transform;
+                poolTransformParent.parent = transform;
+                _poolToParentTransform[pool] = poolTransformParent;
 #endif
-                }
-
-                return true;
             }
 
-            return false;
+            return true;
         }
     }
 }

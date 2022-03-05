@@ -4,50 +4,45 @@
 
     // UNDONE: UniqueLinkedList<T>
     public class UniqueLinkedList<T> : IEnumerable<T> {
-        private HashSet<T> hashSet;
-        private LinkedList<T> linkedList;
+        private readonly HashSet<T> _hashSet = new();
+        private readonly LinkedList<T> _linkedList = new();
 
-        public int Count => hashSet.Count;
-        public LinkedListNode<T> First => linkedList.First;
-        public LinkedListNode<T> Last => linkedList.Last;
+        public int Count => _hashSet.Count;
+        public LinkedListNode<T> First => _linkedList.First;
+        public LinkedListNode<T> Last => _linkedList.Last;
 
-        public UniqueLinkedList() {
-            hashSet = new HashSet<T>();
-            linkedList = new LinkedList<T>();
-        }
-
-        public LinkedListNode<T> AddFirst(T item) => hashSet.Add(item) ? linkedList.AddFirst(item) : null;
-        public LinkedListNode<T> AddLast(T item) => hashSet.Add(item) ? linkedList.AddLast(item) : null;
-        public void RemoveFirst() { if (hashSet.Remove(linkedList.First.Value)) linkedList.RemoveFirst(); }
-        public void RemoveLast() { if (hashSet.Remove(linkedList.Last.Value)) linkedList.RemoveLast(); }
+        public LinkedListNode<T> AddFirst(T item) => _hashSet.Add(item) ? _linkedList.AddFirst(item) : null;
+        public LinkedListNode<T> AddLast(T item) => _hashSet.Add(item) ? _linkedList.AddLast(item) : null;
+        public void RemoveFirst() { if (_hashSet.Remove(_linkedList.First.Value)) _linkedList.RemoveFirst(); }
+        public void RemoveLast() { if (_hashSet.Remove(_linkedList.Last.Value)) _linkedList.RemoveLast(); }
         public T ConsumeFirst() { 
-            T item = linkedList.First.Value;
+            T item = _linkedList.First.Value;
 
-            hashSet.Remove(item);
-            linkedList.RemoveFirst();
+            _hashSet.Remove(item);
+            _linkedList.RemoveFirst();
 
             return item;
         }
 
         public T ConsumeLast() {
-            T item = linkedList.Last.Value;
+            T item = _linkedList.Last.Value;
 
-            hashSet.Remove(item);
-            linkedList.RemoveLast();
+            _hashSet.Remove(item);
+            _linkedList.RemoveLast();
 
             return item;
         }
 
 
         public void Clear() {
-            hashSet.Clear();
-            linkedList.Clear();
+            _hashSet.Clear();
+            _linkedList.Clear();
         }
         public bool Contains(T item) {
-            return hashSet.Contains(item);
+            return _hashSet.Contains(item);
         }
 
-        public IEnumerator<T> GetEnumerator() => linkedList.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => linkedList.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => _linkedList.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _linkedList.GetEnumerator();
     }
 }

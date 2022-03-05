@@ -6,6 +6,43 @@ using UnityEngine.InputSystem;
 
 namespace SoraCore {
     public class CameraFlyController : MonoBehaviour {
+        #region InteropServices
+
+        /// <summary>
+        /// https://www.pinvoke.net/default.aspx/user32.SetCursorPos
+        /// </summary>
+        [DllImport("user32.dll")]
+        private static extern bool SetCursorPos(int x, int y);
+
+        /// <summary>
+        /// http://www.pinvoke.net/default.aspx/user32.GetCursorPos
+        /// </summary>
+        [DllImport("user32.dll")]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+
+        /// <summary>
+        /// http://www.pinvoke.net/default.aspx/Structures/POINT.html
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y) {
+                X = x;
+                Y = y;
+            }
+
+            //Conversions
+            public static implicit operator System.Drawing.Point(POINT p) => new(p.X, p.Y);
+            public static implicit operator POINT(System.Drawing.Point p) => new(p.X, p.Y);
+            public static implicit operator Vector2(POINT p) => new(p.X, p.Y);
+            // Subtracts one from another
+            public static POINT operator -(POINT a, POINT b) => new(a.X - b.X, a.Y - b.Y);
+        }
+
+        #endregion
+
         [SerializeField] private float _moveSpeed = 10f;
         [MinMaxRange(1f, 10f)]
         [SerializeField] private RangedFloat _sprintRampingRange = new(3f, 10f);
@@ -24,54 +61,37 @@ namespace SoraCore {
         private Quaternion _initLocalRot;
         private bool _lastFrameWasPanning;
 
-        [SerializeField, ReadOnly] private PlayerInput _playerInput;
-
-        #region InteropServices
-        /// <summary>
-        /// https://www.pinvoke.net/default.aspx/user32.SetCursorPos
-        /// </summary>
-        [DllImport("user32.dll")]
-        private static extern bool SetCursorPos(int x, int y);
-
-
-        /// <summary>
-        /// http://www.pinvoke.net/default.aspx/Structures/POINT.html
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT {
-            public int X;
-            public int Y;
-
-            public POINT(int x, int y) {
-                X = x;
-                Y = y;
-            }
-
-            //Conversions
-            public static implicit operator System.Drawing.Point(POINT p) => new(p.X, p.Y);
-            public static implicit operator POINT(System.Drawing.Point p) => new(p.X, p.Y);
-            public static implicit operator Vector2(POINT p) => new(p.X, p.Y);
-            // Subtracts one from another
-            public static POINT operator -(POINT a, POINT b) => new(a.X - b.X, a.Y - b.Y);
-        }
-
-
-        /// <summary>
-        /// http://www.pinvoke.net/default.aspx/user32.GetCursorPos
-        /// </summary>
-        [DllImport("user32.dll")]
-        private static extern bool GetCursorPos(out POINT lpPoint);
-        #endregion
+        public InputActionMap ActionMap;
+        private InputAction _moveAction;
+        private InputAction _sprintAction;
+        private InputAction _panAction;
 
         private void Awake() {
-            _playerInput = transform.GetComponentNullCheck<PlayerInput>();
+            ActionMap = new InputActionMap();
+
+            _moveAction = ActionMap.AddAction("Move", InputActionType.Value);
+            _moveAction.AddCompositeBinding("3DVector")
+                .With("Up", "<Keyboard>/e")
+                .With("Down", "<Keyboard>/q")
+                .With("Left", "<Keyboard>/a")
+                .With("Right", "<Keyboard>/d")
+                .With("Forward", "<Keyboard>/w")
+                .With("Backward", "<Keyboard>/s");
+
+            _sprintAction = ActionMap.AddAction("Sprint", InputActionType.Button);
+            _sprintAction.AddBinding("<Keyboard>/shift");
+
+            _panAction = ActionMap.AddAction("Pan", InputActionType.Button);
+            _panAction.AddBinding("<Mouse>/rightButton");
+
+            ActionMap.Enable();
         }
 
-        #region PlayerInput callbacks
-        public void OnMove(InputAction.CallbackContext context) => _axesInput = context.ReadValue<Vector3>();
-        public void OnSprint(InputAction.CallbackContext context) => _isSprinting = context.performed;
-        public void OnCameraPan(InputAction.CallbackContext context) => _isPanning = context.performed;
-        #endregion
+        private void Update() {
+            _axesInput = _moveAction.ReadValue<Vector3>();
+            _isSprinting = _sprintAction.IsPressed();
+            _isPanning = _panAction.IsPressed();
+        }
 
         private void FixedUpdate() {
             float sprintMul = 1;

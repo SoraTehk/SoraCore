@@ -14,7 +14,7 @@ namespace SoraCore.Manager {
             _startButton.clicked += () =>
             {
                 UIManager.ShowScreen(UIType.Menu, false);
-                GameManager.LoadLevel(_ingameLevel, true, true, true);
+                LevelManager.LoadLevel(_ingameLevel, true, true, true);
             };
         }
 
