@@ -19,7 +19,7 @@ namespace SoraCore.Manager {
             SceneManager.SetActiveScene(obj.Result.Scene);
             SceneManager.UnloadSceneAsync(0);
 
-            AudioManager.LoadPlayerPrefsAll();
+            //SoundManager.LoadPlayerPrefsAll();
             LevelManager.LoadLevel(_levelToLoad);
         }
     }

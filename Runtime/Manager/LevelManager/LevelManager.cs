@@ -42,7 +42,8 @@ namespace SoraCore.Manager {
     }
 
     public partial class LevelManager : SoraManager {
-        #region Static -------------------------------------------------------------------------------------------------------
+        #region Dispatching Static Event -------------------------------------------------------------------------------------
+
         /// <summary>
         /// Raised when the load sequence started
         /// </summary>
@@ -55,6 +56,10 @@ namespace SoraCore.Manager {
         /// Raised when the load sequence finished
         /// </summary>
         public static event Action<LoadContext> OnLoadFinished;
+
+        #endregion
+        #region Static -------------------------------------------------------------------------------------------------------
+
         private static Action<LevelSO, bool, bool, bool> _loadLevelRequested;
 
         public static void LoadLevel(LevelSO sd, bool showLoadingScreen = true, bool fadeScreen = true, bool unloadPrevious = true) {

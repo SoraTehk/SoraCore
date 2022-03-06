@@ -13,7 +13,7 @@ namespace SoraCore.Manager {
             string s2 = $"{callerName}()".Bold();
 
             // UNDONE: Log more info
-            Debug.LogWarning($"{SORA_WARNING}{s1.Color("white")}: {s2} was requested but no {s1} picked it up.\n Make sure the persistent scene are fully loaded before method calls");
+            Debug.LogWarning($"{SoraWarning}{s1.Color("white")}: {s2} was requested but no {s1} picked it up.\n Make sure the persistent scene are fully loaded before method calls");
         }
     }
 }

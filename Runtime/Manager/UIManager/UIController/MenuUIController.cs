@@ -3,11 +3,11 @@ namespace SoraCore.Manager {
     using UnityEngine;
     using UnityEngine.UIElements;
 
-    public class MenuUIController : MonoBehaviour, IUIController {
+    public class MenuUIController : MonoBehaviour {
         [SerializeField] LevelSO _ingameLevel;
         [field: SerializeField, AutoProperty] public UIDocument Document { get; private set; }
 
-        private Button _startButton;
+        [SerializeField] private Button _startButton;
 
         private void Awake() {
             _startButton = Document.rootVisualElement.Q<Button>("start-button");
@@ -18,9 +18,8 @@ namespace SoraCore.Manager {
             };
         }
 
-        public void ShowUI(bool value) {
-            Document.rootVisualElement.style.display = value ? DisplayStyle.Flex : DisplayStyle.None;
-            Document.rootVisualElement.pickingMode = value ? PickingMode.Position : PickingMode.Ignore;
+        private void OnDisable() {
+            Debug.Log("OnDisable: " + _startButton.text);
         }
     }
 }

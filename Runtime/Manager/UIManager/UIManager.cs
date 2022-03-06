@@ -2,6 +2,7 @@ namespace SoraCore.Manager {
     using MyBox;
     using System;
     using UnityEngine;
+    using System.Collections.Generic;
 
     public enum UIType {
         Menu,
@@ -33,15 +34,12 @@ namespace SoraCore.Manager {
         }
         #endregion
 
-        [SerializeField, AutoProperty] private MenuUIController _menuUIController;
-        [SerializeField, AutoProperty] private LoadingUIController _loadingUIController;
-        [SerializeField, AutoProperty] private GameplayUIController _gameplayUIController;
-
+        [SerializeField] private List<GameObject> _uis = new();
 
         private void Awake() {
-            _menuUIController.ShowUI(false);
-            _loadingUIController.ShowUI(false);
-            _gameplayUIController.ShowUI(false);
+            foreach (GameObject ui in _uis) {
+                ui.SetActive(false);
+            }
         }
 
         private void OnEnable() {
@@ -54,25 +52,27 @@ namespace SoraCore.Manager {
             _updateLoadScreenRequested -= InnerUpdateLoadScreen;
         }
 
-        private void InnerShowScreen(UIType type, bool value) {
-            switch (type) {
-                case UIType.Menu:
-                    _menuUIController.ShowUI(value);
-                    break;
-                case UIType.Load:
-                    _loadingUIController.ShowUI(value);
-                    break;
-                case UIType.Gameplay:
-                    _gameplayUIController.ShowUI(value);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
+        private void InnerShowScreen(UIType type, bool show) {
+            int targetIndex = (int)type;
+
+            if (targetIndex < 0 || targetIndex >= _uis.Count) {
+                SoraCore.LogWarning($"Undefined value of {type}", nameof(UIManager));
+                return;
+            }
+
+            for (int i = 0; i < _uis.Count; i++) {
+                if (i == targetIndex) {
+                    _uis[i].SetActive(show);
+                }
+                else {
+                    _uis[i].SetActive(false);
+                }
             }
         }
 
         private void InnerUpdateLoadScreen(float main, float sub) {
-            _loadingUIController.MainProgress = main;
-            _loadingUIController.SubProgress = sub;
+            //_loadingUIController.MainProgress = main;
+            //_loadingUIController.SubProgress = sub;
         }
     }
 }

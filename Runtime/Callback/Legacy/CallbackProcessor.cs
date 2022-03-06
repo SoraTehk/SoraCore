@@ -129,7 +129,7 @@ namespace SoraCore.Callback {
 
 
             if (callback.OnCallbackEvent == null) {
-                Debug.LogWarning(SORA_WARNING + ": Callback event are null!", debugContext);
+                Debug.LogWarning(SoraWarning + ": Callback event are null!", debugContext);
                 if (debugContext == null)
                     throw new ArgumentNullException();
             }

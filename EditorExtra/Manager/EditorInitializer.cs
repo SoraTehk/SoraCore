@@ -2,8 +2,6 @@
 namespace SoraCore.Manager.Editor {
     using UnityEngine;
     using UnityEngine.SceneManagement;
-    using UnityEngine.ResourceManagement.AsyncOperations;
-    using UnityEngine.ResourceManagement.ResourceProviders;
 
     public class EditorInitializer : MonoBehaviour {
         [SerializeField] private LevelSO _thisScene;
@@ -17,10 +15,11 @@ namespace SoraCore.Manager.Editor {
 
             if (_isColdStart) {
                 // Synchronously loading the persistent scene
-                AsyncOperationHandle<SceneInstance> op = _persistentScene.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
-                // op.Completed += (completedOp) => SceneManager.SetActiveScene(completedOp.Result.Scene);
+                var op = _persistentScene.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
+                // This line are not actually finished loading the scene?         
                 op.WaitForCompletion();
 
+                // So we will have to use await here
                 await op.Task;
 
                 SceneManager.SetActiveScene(op.Result.Scene);
@@ -29,8 +28,6 @@ namespace SoraCore.Manager.Editor {
                 if (_reload) LevelManager.LoadLevel(_thisScene);
             }
         }
-
-
     }
 }
 #endif

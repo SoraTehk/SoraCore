@@ -8,7 +8,7 @@ namespace SoraCore.Extension {
     using Debug = UnityEngine.Debug;
     using Object = UnityEngine.Object;
 
-    public static class Extension {
+    public static partial class Extension {
         private static readonly System.Random _random = new();
         ///<summary>
         /// Shuffle this list
@@ -33,7 +33,7 @@ namespace SoraCore.Extension {
         public static T[] GetComponentsNullCheck<T>(this Component transform, Object debugContext = null) where T : Component {
             // If the transfrom are null then return
             if (!transform) {
-                Debug.LogError($"{SORA_NULL}: <b>transform</b> are null.", debugContext);
+                Debug.LogError($"{SoraNull}: <b>transform</b> are null.", debugContext);
                 return null;
             }
 
@@ -42,7 +42,7 @@ namespace SoraCore.Extension {
             if (components.Length > 0) return components;
 
             // Cant find any T in transform
-            Debug.LogError($"{SORA_NULL}: Cant find any <b>{typeof(T).Name}</b>(type) in <b>{transform.name}</b>.", transform);
+            Debug.LogError($"{SoraNull}: Cant find any <b>{typeof(T).Name}</b>(type) in <b>{transform.name}</b>.", transform);
             return null;
         }
 

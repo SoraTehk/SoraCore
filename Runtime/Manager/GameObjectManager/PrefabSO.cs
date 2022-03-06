@@ -1,26 +1,15 @@
 namespace SoraCore.Manager {
+    using System;
     using UnityEngine;
     using MyBox;
-#if UNITY_EDITOR
-    using UnityEditor;
-    public partial class PrefabSO : ScriptableObject {
-        void OnValidate() {
-            if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(GetInstanceID(), out string assetguid, out long _)) {
-                AssetGuid = assetguid;
-            }
-        }
-
-    }
-#endif
+    using UnityEngine.AddressableAssets;
 
     [CreateAssetMenu(fileName = "PrefabData", menuName = "SoraCore/GameObject Manager/Prefab Data")]
-    public partial class PrefabSO : ScriptableObject {
-        [ReadOnly] public string AssetGuid;
-        [Space(20)]
-        public GameObject prefab;
-        public bool enablePooling;
-        [ReadOnly("enablePooling", true)] public int preload = 10;
-        [ReadOnly("enablePooling", true)] public int capacity = 10;
+    public class PrefabSO : ScriptableObject {
+        [field: SerializeField] public AssetReferenceGameObject GameObjectRef { get; private set; }
+        [field: SerializeField] public bool EnablePooling { get; private set; }
+        [ReadOnly("<EnablePooling>k__BackingField", true)] public int preload = 10;
+        [ReadOnly("<EnablePooling>k__BackingField", true)] public int capacity = 10;
 
         // Inherit this class and override these 3 for specific needs
         #region ObjectPool<T> delegate methods
