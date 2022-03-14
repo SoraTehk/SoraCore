@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d49fecd9f4a73f42bca03abc909de56, type: 3}
   m_Name: MasterGroup
   m_EditorClassIdentifier: 
-  Group: {fileID: 24300002, guid: f2185c8c1b79cd14dae6ad219df0894b, type: 2}
-  VolumeParameter: MasterVolume
-  PitchParameter: MasterPitch
-  Parameters: []
+  <Group>k__BackingField: {fileID: 24300002, guid: f2185c8c1b79cd14dae6ad219df0894b,
+    type: 2}
+  <VolumeParameter>k__BackingField: MasterVolume
+  <PitchParameter>k__BackingField: MasterPitch

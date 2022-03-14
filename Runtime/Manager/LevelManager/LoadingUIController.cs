@@ -6,6 +6,7 @@ namespace SoraCore.Manager {
 
     public class LoadingUIController : MonoBehaviour {
         [field: SerializeField, AutoProperty] public UIDocument Document { get; private set; }
+
         [Range(0f, 1f)] public float MainProgress;
         [Range(0f, 1f)] public float SubProgress;
 
@@ -21,10 +22,6 @@ namespace SoraCore.Manager {
             // TODO: Make the progress bar smoother
             _mainProgressBar.value = MainProgress;
             _subProgressBar.value = SubProgress;
-        }
-
-        private void OnDisable() {
-            Debug.Log("OnDisable: " + _mainProgressBar.value);
         }
     }
 }

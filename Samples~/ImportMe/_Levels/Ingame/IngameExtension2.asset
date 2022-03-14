@@ -12,16 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c8df776bbd1fc4ea384b4481f15de6, type: 3}
   m_Name: IngameExtension2
   m_EditorClassIdentifier: 
-  _editorSceneReference:
+  <SceneReference>k__BackingField:
     m_AssetGUID: 8a632dd7c7d472c4f980f1e13f48aafa
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  sceneReference:
-    m_AssetGUID: 8a632dd7c7d472c4f980f1e13f48aafa
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  <PreloadPrefabList>k__BackingField: []
-  subLevels:
+    m_EditorAssetChanged: 0
+  <SubLevels>k__BackingField:
   - {fileID: 11400000, guid: bab4f849968421847abaa7c928760344, type: 2}

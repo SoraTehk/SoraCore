@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8045970446362305372}
   - component: {fileID: 8045970446362305371}
   - component: {fileID: 8045970446362305370}
+  - component: {fileID: 839310602893922474}
   - component: {fileID: 8045970446362305374}
   m_Layer: 0
   m_Name: Bullet
@@ -172,6 +173,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.05, y: 0.05, z: 0.05}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &839310602893922474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8045970446362305375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be9710baa9229ca49bb0bcfeea21f2f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsRuntimeInstantiate>k__BackingField: 1
+  <Prefab>k__BackingField: {fileID: 11400000, guid: 0a03c4d41bbd75044b7ec8d0b0239877,
+    type: 2}
+  <AssetGUID>k__BackingField: 0a03c4d41bbd75044b7ec8d0b0239877
+  <GUID>k__BackingField: 
 --- !u!114 &8045970446362305374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +202,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4129cbcb00717a4bb0449a7c1fdd859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _goManagerEC: {fileID: 11400000, guid: 0b0a52e88e09ab64cac701c59aa5c23d, type: 2}
-  _prefabData: {fileID: 11400000, guid: 0a03c4d41bbd75044b7ec8d0b0239877, type: 2}
   _rigidbody: {fileID: 0}
   _despawnTime: 0

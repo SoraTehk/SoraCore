@@ -16,5 +16,4 @@ Version: **x**(Major).**y**(Minor).**z**(Fixes)
 * GameObject Manager: Create, destroy, pool, preload, callback.
   * Audio Manager: Play audio anywhere with MixerGroup & AudioConfiguration.
   * Level Manager: Handle scene loading more easily (add support for subscenes)
-* UI Manager: Currently handle way to switch between UI Tookit documents.
 * CameraFlyController: Mimic the scene view for runtime testing.

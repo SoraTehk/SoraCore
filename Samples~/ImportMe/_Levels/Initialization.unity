@@ -169,4 +169,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _persistentLevel: {fileID: 11400000, guid: 19dc326b584ba0c4bac1b7715b61096d, type: 2}
   _levelToLoad: {fileID: 11400000, guid: d8699dfa93862524e95ddffe7d7769a0, type: 2}
-  _testDependency: {fileID: 0}

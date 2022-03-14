@@ -31,7 +31,7 @@ namespace SoraCore.Manager {
     public partial class SaveableController : MonoBehaviour {
         [field: SerializeField] public bool IsRuntimeInstantiate { get; private set; } = false;
 
-        [field: SerializeField] public PrefabSO Prefab { get; private set; }
+        [field: SerializeField] public BlueprintSO Prefab { get; private set; }
         [field: SerializeField] public string AssetGUID { get; private set; }
 
         [field: SerializeField] public string GUID { get; private set; }

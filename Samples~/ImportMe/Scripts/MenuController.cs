@@ -1,9 +1,9 @@
-namespace SoraCore.Manager {
-    using UnityEngine;
-    public class MenuController : MonoBehaviour {
+using UnityEngine;
 
-        private void Awake() {
-            UIManager.ShowScreen(UIType.Menu);
-        }
+public class MenuController : MonoBehaviour {
+    [field: SerializeField] public MenuUIController MenuUIController { get; private set; }
+
+    private void Start() {
+        MenuUIController.enabled = true;
     }
 }

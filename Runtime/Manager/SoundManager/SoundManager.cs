@@ -10,7 +10,7 @@ namespace SoraCore.Manager {
         /// <summary>
         /// Raised when the mixer group volume changed
         /// </summary>
-        public static event Action<MixerGroupSO, float> OnVolumeChanged;
+        public static event Action<MixerGroupSO, float> VolumeChanged;
 
         #endregion
         #region Static -------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ namespace SoraCore.Manager {
 
         public const float MinVolume = 0.0001f;
         [SerializeField] private AudioMixer _audioMixer;
-        [SerializeField] private PrefabSO _audioSourcePrefab;
+        [SerializeField] private BlueprintSO _audioSourcePrefab;
         [SerializeField] private float _volumeMultiplier = 30f;
         [SerializeField] private AudioSource _musicSource;
 
@@ -106,16 +106,16 @@ namespace SoraCore.Manager {
         }
 
         private void InnerPlayPos(AudioSO ad, Vector3 pos, AudioConfigurationSO cfg, MixerGroupSO grp) {
-            /// Spawn an audio source at target position
-            AudioSource audioSource = GameObjectManager.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
+            // Spawn an audio source at target position
+            AudioSource audioSource = GameObjectManager.Get(_audioSourcePrefab).GetComponent<AudioSource>();
             audioSource.transform.position = pos;
 
             SetUpAndPlay(audioSource, ad, cfg, grp);
         }
 
         private void InnerPlayTransform(AudioSO ad, Transform parent, AudioConfigurationSO cfg, MixerGroupSO grp) {
-            /// Spawn an audio source at target position
-            AudioSource audioSource = GameObjectManager.Instantiate(_audioSourcePrefab).GetComponent<AudioSource>();
+            // Spawn an audio source at target position
+            AudioSource audioSource = GameObjectManager.Get(_audioSourcePrefab).GetComponent<AudioSource>();
             audioSource.transform.parent = parent;
 
             SetUpAndPlay(audioSource, ad, cfg, grp);
@@ -144,7 +144,7 @@ namespace SoraCore.Manager {
             float dBValue = Mathf.Log10(Mathf.Max(MinVolume, value)) * _volumeMultiplier;
             _audioMixer.SetFloat(grp.VolumeParameter, dBValue);
 
-            OnVolumeChanged?.Invoke(grp, value);
+            VolumeChanged?.Invoke(grp, value);
 
             return;
         }

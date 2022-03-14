@@ -161,14 +161,14 @@ namespace SoraCore.Manager {
                 
                 foreach (var stateData in stateDataSet) {
                     // Try to find & load the conresponding asset prefab data
-                    var pdRef = new AssetReferenceT<PrefabSO>(stateData.AssetGUID);
+                    var pdRef = new AssetReferenceT<BlueprintSO>(stateData.AssetGUID);
 
                     var op = pdRef.LoadAssetAsync();
                     op.WaitForCompletion();
 
                     if (op.Status == AsyncOperationStatus.Succeeded) {
                         // Instantiate
-                        var gameObj = GameObjectManager.Instantiate(op.Result);
+                        var gameObj = GameObjectManager.Get(op.Result);
                         //SceneManager.MoveGameObjectToScene(gameObj, scene);
                         SaveableController saveable = gameObj.GetComponent<SaveableController>();
                         saveable.LoadStates(stateData.TypeToData);

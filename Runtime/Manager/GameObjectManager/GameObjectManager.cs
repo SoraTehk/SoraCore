@@ -8,27 +8,27 @@ namespace SoraCore.Manager {
     public class GameObjectManager : SoraManager {
         #region Static -------------------------------------------------------------------------------------------------------
 
-        private static Func<PrefabSO, GameObject> _instantiateRequested;
-        private static Action<GameObject> _destroyRequested;
-        private static Action<PrefabSO> _preloadRequested;
-        private static Action<PrefabSO> _clearRequested;
+        private static Func<BlueprintSO, GameObject> _getRequested;
+        private static Action<GameObject> _releaseRequested;
+        private static Action<BlueprintSO> _preloadRequested;
+        private static Action<BlueprintSO> _clearRequested;
 
         /// <summary>
-        /// Return an <see cref="GameObject"/> base on <paramref name="pd"/>.
+        /// Return an <see cref="GameObject"/> base on <paramref name="bd"/>.
         /// </summary>
-        public static GameObject Instantiate(PrefabSO pd) {
-            if (_instantiateRequested != null) return _instantiateRequested.Invoke(pd);
+        public static GameObject Get(BlueprintSO bd) {
+            if (_getRequested != null) return _getRequested.Invoke(bd);
 
             LogWarningForEvent(nameof(GameObjectManager));
             return null;
         }
 
         /// <summary>
-        /// Destroy <paramref name="gObj"/> base on it <see cref="PrefabSO"/> settings.
+        /// Destroy <paramref name="gObj"/> base on it <see cref="BlueprintSO"/> settings.
         /// </summary>
-        public static void Destroy(GameObject gObj) {
-            if (_destroyRequested != null) {
-                _destroyRequested.Invoke(gObj);
+        public static void Release(GameObject gObj) {
+            if (_releaseRequested != null) {
+                _releaseRequested.Invoke(gObj);
                 return;
             }
 
@@ -36,11 +36,11 @@ namespace SoraCore.Manager {
         }
 
         /// <summary>
-        /// Clear <paramref name="pd"/> pool data.
+        /// Clear <paramref name="bd"/> pool data.
         /// </summary>
-        public static void Clear(PrefabSO pd) {
+        public static void Clear(BlueprintSO bd) {
             if (_clearRequested != null) {
-                _clearRequested.Invoke(pd);
+                _clearRequested.Invoke(bd);
                 return;
             }
 
@@ -48,11 +48,11 @@ namespace SoraCore.Manager {
         }
 
         /// <summary>
-        /// Clear <paramref name="pd"/> pool data.
+        /// Clear <paramref name="bd"/> pool data.
         /// </summary>
-        public static void Preload(PrefabSO pd) {
+        public static void Preload(BlueprintSO bd) {
             if (_preloadRequested != null) {
-                _preloadRequested.Invoke(pd);
+                _preloadRequested.Invoke(bd);
                 return;
             }
 
@@ -61,32 +61,32 @@ namespace SoraCore.Manager {
 
         #endregion
 
-        private readonly Dictionary<GameObject, PrefabSO> _gameObjectToPrefabD = new();
-        private readonly Dictionary<PrefabSO, ObjectPool<GameObject>> _prefabDataToPool = new();
+        private readonly Dictionary<GameObject, BlueprintSO> _gameObjectToBlueprint = new();
+        private readonly Dictionary<BlueprintSO, ObjectPool<GameObject>> _blueprintToPool = new();
 #if UNITY_EDITOR
         // Only nested game object in hierarchy when in editor mode
         public Dictionary<ObjectPool<GameObject>, Transform> _poolToParentTransform = new();
 #endif
 
         private void OnEnable() {
-            _instantiateRequested += Get;
-            _destroyRequested += Release;
+            _getRequested += InnerGet;
+            _releaseRequested += InnerRelease;
             _clearRequested += InnerClear;
             _preloadRequested += InnerPreload;
         }
 
         private void OnDisable() {
-            _instantiateRequested -= Get;
-            _destroyRequested -= Release;
+            _getRequested -= InnerGet;
+            _releaseRequested -= InnerRelease;
             _clearRequested -= InnerClear;
             _preloadRequested -= InnerPreload;
         }
-        private GameObject Get(PrefabSO pd) {
+        private GameObject InnerGet(BlueprintSO bd) {
             GameObject gObj;
 
-            if (TryGetOrCreatePool(pd)) {
+            if (TryGetOrCreatePool(bd)) {
                 // Return an object from the pool
-                ObjectPool<GameObject> pool = _prefabDataToPool[pd];
+                ObjectPool<GameObject> pool = _blueprintToPool[bd];
                 gObj = pool.Get();
 
 #if UNITY_EDITOR
@@ -96,75 +96,82 @@ namespace SoraCore.Manager {
             }
             else {
                 // Instantiate normal object as it not marked as poolable synchronously
-                var op = pd.GameObjectRef.InstantiateAsync();
+                var op = bd.AssetRef.InstantiateAsync();
                 op.WaitForCompletion();
                 gObj = op.Result;
 
-                _gameObjectToPrefabD[gObj] = pd;
-                pd.OnGameObjGet(gObj);
+                _gameObjectToBlueprint[gObj] = bd;
+                bd.OnGameObjGet(gObj);
             }
 
             return gObj;
         }
 
-        private void Release(GameObject gObj) {
-            // Does this game object spawned by the system
-            if (!_gameObjectToPrefabD.TryGetValue(gObj, out PrefabSO pd)) {
-                SoraCore.LogWarning($"You are trying to destroy an object which are not created by the system, no callback will be processed!", nameof(GameObjectManager), gObj);
-                UnityEngine.Object.Destroy(gObj);
+        private void InnerRelease(GameObject gObj) {
+            if (!gObj)
+            {
+                SoraCore.LogWarning($"You are trying to release null!", nameof(GameObjectManager));
                 return;
             }
 
-            if (TryGetOrCreatePool(pd)) {
-                _prefabDataToPool[pd].Release(gObj);
+            // Does this game object spawned by the system
+            if (!_gameObjectToBlueprint.TryGetValue(gObj, out BlueprintSO bd)) {
+                SoraCore.LogWarning($"You are trying to release an object which are not created by the system, no callback will be processed!", nameof(GameObjectManager), gObj);
+                Destroy(gObj);
+                return;
+            }
+
+            if (TryGetOrCreatePool(bd)) {
+                _blueprintToPool[bd].Release(gObj);
             }
             else {
-                pd.OnGameObjRelease(gObj);
-                pd.OnGameObjDestroy(gObj);
+                bd.OnGameObjRelease(gObj);
+                bd.OnGameObjDestroy(gObj);
             }
         }
 
-        private void InnerClear(PrefabSO pd) {
-            _prefabDataToPool[pd].Clear();
+        private void InnerClear(BlueprintSO bd) {
+            _blueprintToPool[bd].Clear();
         }
 
-        private void InnerPreload(PrefabSO obj) {
+        private void InnerPreload(BlueprintSO bd) {
+            bd.AssetRef.InstantiateAsync().Completed += op => Addressables.Release(op);
         }
 
-        private bool TryGetOrCreatePool(PrefabSO pd) {
+        private bool TryGetOrCreatePool(BlueprintSO bd) {
             // Return false if not poolable
-            if (!pd.EnablePooling) return false;
+            if (!bd.EnablePooling) return false;
 
             // If key not found then..
-            if (!_prefabDataToPool.ContainsKey(pd)) {
+            if (!_blueprintToPool.ContainsKey(bd)) {
                 // ..create pool
                 var pool = new ObjectPool<GameObject>(() =>
                 {
-                    var op = pd.GameObjectRef.InstantiateAsync();
+                    var op = bd.AssetRef.InstantiateAsync();
                     op.WaitForCompletion();
                     var gObj = op.Result;
 
-                    _gameObjectToPrefabD[gObj] = pd;
+                    _gameObjectToBlueprint[gObj] = bd;
 
                     return gObj;
                 },
-                pd.OnGameObjGet,
-                pd.OnGameObjRelease,
+                bd.OnGameObjGet,
+                bd.OnGameObjRelease,
                 gObj =>
                 {
                     Addressables.ReleaseInstance(gObj);
-                    pd.OnGameObjDestroy(gObj);
+                    bd.OnGameObjDestroy(gObj);
                 },
                 true,
-                pd.preload,
-                pd.capacity);
+                bd.preload,
+                bd.capacity);
 
                 // Add newly created pool to the dict
-                _prefabDataToPool[pd] = pool;
+                _blueprintToPool[bd] = pool;
 
                 // Only nested game object in hierarchy when in editor mode
 #if UNITY_EDITOR
-                Transform poolTransformParent = new GameObject("Dynamic").transform;
+                Transform poolTransformParent = new GameObject(bd.AssetRef.editorAsset.name).transform;
                 poolTransformParent.parent = transform;
                 _poolToParentTransform[pool] = poolTransformParent;
 #endif

@@ -1,8 +1,8 @@
 namespace SoraCore.Manager {
     using UnityEngine;
 
-    [CreateAssetMenu(fileName = "RigidbodyPrefabData", menuName = "SoraCore/GameObject Manager/Rigidbody Prefab Data")]
-    public class RigidbodyPrefabSO : PrefabSO {
+    [CreateAssetMenu(fileName = "RigidbodyBlueprintData", menuName = "SoraCore/GameObject Manager/Rigidbody Blueprint Data")]
+    public class RigidbodyBlueprintSO : BlueprintSO {
         #region ObjectPool<T> delegate methods
         //public virtual void OnGameObjGet(GameObject gObj) => gObj.SetActive(true);
         public override void OnGameObjRelease(GameObject gObj) {

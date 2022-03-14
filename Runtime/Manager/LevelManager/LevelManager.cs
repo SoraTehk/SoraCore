@@ -47,15 +47,15 @@ namespace SoraCore.Manager {
         /// <summary>
         /// Raised when the load sequence started
         /// </summary>
-        public static event Action<LoadContext> OnLoadStarted;
+        public static event Action<LoadContext> LoadStarted;
         /// <summary>
         /// Raised when loading progress changed
         /// </summary>
-        public static event Action<LoadContext> OnLoadProgressChanged;
+        public static event Action<LoadContext> LoadProgressChanged;
         /// <summary>
         /// Raised when the load sequence finished
         /// </summary>
-        public static event Action<LoadContext> OnLoadFinished;
+        public static event Action<LoadContext> LoadFinished;
 
         #endregion
         #region Static -------------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ namespace SoraCore.Manager {
                 LevelsToLoad = _levelsToLoad.ToList(),
                 ShowLoadingScreen = showLoadingScreen,
             };
-            OnLoadStarted?.Invoke(ctx);
+            LoadStarted?.Invoke(ctx);
 
             // *Fading out*
 
@@ -166,10 +166,10 @@ namespace SoraCore.Manager {
 
                 // Update progress bar
                 ctx.MainProgress = (float)(totalOpCount - tasks.Count) / totalOpCount;
-                OnLoadProgressChanged?.Invoke(ctx); 
+                LoadProgressChanged?.Invoke(ctx); 
             }
 
-            OnLoadFinished?.Invoke(ctx);
+            LoadFinished?.Invoke(ctx);
 
             // *Fading in*
 

@@ -4,9 +4,9 @@ namespace SoraCore.Manager {
     using MyBox;
     using UnityEngine.AddressableAssets;
 
-    [CreateAssetMenu(fileName = "PrefabData", menuName = "SoraCore/GameObject Manager/Prefab Data")]
-    public class PrefabSO : ScriptableObject {
-        [field: SerializeField] public AssetReferenceGameObject GameObjectRef { get; private set; }
+    [CreateAssetMenu(fileName = "BlueprintData", menuName = "SoraCore/GameObject Manager/Blueprint Data")]
+    public class BlueprintSO : ScriptableObject {
+        [field: SerializeField] public AssetReferenceGameObject AssetRef { get; private set; }
         [field: SerializeField] public bool EnablePooling { get; private set; }
         [ReadOnly("<EnablePooling>k__BackingField", true)] public int preload = 10;
         [ReadOnly("<EnablePooling>k__BackingField", true)] public int capacity = 10;

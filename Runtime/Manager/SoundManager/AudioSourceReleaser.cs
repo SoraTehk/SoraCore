@@ -9,7 +9,7 @@ namespace SoraCore.Manager {
         private void Update() {
             if (AudioListener.pause || _audioSource.isPlaying) return;
 
-            GameObjectManager.Destroy(gameObject);
+            GameObjectManager.Release(gameObject);
         }
     }
 }
