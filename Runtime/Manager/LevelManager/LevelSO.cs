@@ -33,6 +33,7 @@ namespace SoraCore.Manager {
 #endif
 
     public partial class LevelSO : ScriptableObject {
+        [field: AssetReferenceUILabelRestriction("Scene")]
         [field: SerializeField] public AssetReference SceneReference { get; private set; }
 
 #if PREFAB_UTILITIES

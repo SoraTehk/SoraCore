@@ -78,7 +78,6 @@ namespace SoraCore.Manager {
         // Parameters for level loading request
         private readonly List<LevelSO> _loadedLevels = new();
         private readonly List<AssetReference> _loadedScenes = new();
-        private readonly UniqueLinkedList<LevelSO> _levelsToLoad = new();
         private bool _isLoading;
 
         private void OnEnable() {
@@ -102,14 +101,14 @@ namespace SoraCore.Manager {
             _isLoading = true;
 
             // Populating levels linked list with recursive function as head first
-            _levelsToLoad.AddLast(ld);
-            AddLevelToList(ld);
-            
+            UniqueLinkedList<LevelSO> levelsToLoad = GetSubLevels(ld);
+            levelsToLoad.AddFirst(ld);
+
             // Context for event dispatching
             LoadContext ctx = new()
             {
                 LevelsToUnload = unloadPrevious ? _loadedLevels.ToList() : new List<LevelSO>(),
-                LevelsToLoad = _levelsToLoad.ToList(),
+                LevelsToLoad = levelsToLoad.ToList(),
                 ShowLoadingScreen = showLoadingScreen,
             };
             LoadStarted?.Invoke(ctx);
@@ -138,15 +137,15 @@ namespace SoraCore.Manager {
             }
 
             // Loading new scenes
-            int totalOpCount = _levelsToLoad.Count;
+            int totalOpCount = levelsToLoad.Count;
             List<Task<SceneInstance>> tasks = new(totalOpCount);
 
             for (int i = 0; i < totalOpCount; i++) {
                 // Consume the linked list depend on load type
                 LevelSO level = LevelLoadType switch
                 {
-                    LevelLoadType.Head => _levelsToLoad.ConsumeFirst(),
-                    LevelLoadType.Tail => _levelsToLoad.ConsumeLast(),
+                    LevelLoadType.Head => levelsToLoad.ConsumeFirst(),
+                    LevelLoadType.Tail => levelsToLoad.ConsumeLast(),
                     _ => throw new ArgumentOutOfRangeException(nameof(LevelLoadType), $"Undefined enum value of {nameof(LevelLoadType)}"),
                 };
 
@@ -174,20 +173,31 @@ namespace SoraCore.Manager {
             // *Fading in*
 
             _isLoading = false;
+        }
+
+        /// <summary>
+        /// Produce a <seealso cref="UniqueLinkedList{T}"/> that contain all sub-levels of <paramref name="level"/>.
+        /// </summary>
+        public static UniqueLinkedList<LevelSO> GetSubLevels(LevelSO level)
+        {
+            UniqueLinkedList<LevelSO> result = new();
+            AddLevelToList(level); // Recursive
+            return result;
 
             #region Local Functions
-
-            void AddLevelToList(LevelSO input) {
+            void AddLevelToList(LevelSO input)
+            {
                 // Firstly, add this sub-levels
-                foreach (var level in input.SubLevels) {
-                    _levelsToLoad.AddLast(level);
+                foreach (var level in input.SubLevels)
+                {
+                    result.AddLast(level);
                 }
                 // Secondly, process it sub-levels
-                foreach (var level in input.SubLevels) {
+                foreach (var level in input.SubLevels)
+                {
                     AddLevelToList(level);
                 }
             }
-
             #endregion
         }
     }

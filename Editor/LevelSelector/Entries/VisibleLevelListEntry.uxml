@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement name="root" style="flex-direction: row;">
+        <uie:ObjectField name="LevelSO-field" type="SoraCore.Manager.LevelSO, SoraCore" style="flex-grow: 1;" />
+        <ui:Button text="Single" display-tooltip-when-elided="true" name="single-button" style="margin-left: auto; margin-right: 0;" />
+        <ui:Button text="Full" display-tooltip-when-elided="true" name="full-button" style="margin-left: 1px; margin-right: 1px;" />
+        <ui:Button text="Unload" display-tooltip-when-elided="true" name="unload-button" style="margin-left: 1px; margin-right: 1px;" />
+    </ui:VisualElement>
+</ui:UXML>

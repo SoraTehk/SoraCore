@@ -5,9 +5,11 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - m_ViewDataDictionary: {instanceID: 0}
-  - sceneListEntryXML: {fileID: 9197481963319205126, guid: 23233094bdb9ac14c98720889252f439,
+  - VisibleListEntryUXML: {fileID: 9197481963319205126, guid: 23233094bdb9ac14c98720889252f439,
       type: 3}
-  - sceneInfoXML: {fileID: 9197481963319205126, guid: b624ed1eb469bc14dab22c01df369430,
+  - LevelListUXML: {fileID: 9197481963319205126, guid: bff7357e016b06a489052164aefc23c3,
+      type: 3}
+  - LevelListEntryUXML: {fileID: 9197481963319205126, guid: 500f103116b87214197b01fb8c101555,
       type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

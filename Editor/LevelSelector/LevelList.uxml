@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:ScrollView name="window-sv">
+        <ui:ListView focusable="true" name="level-lv" reorderable="true" reorder-mode="Animated" />
+        <ui:Button text="Refresh" name="refresh-btn" />
+    </ui:ScrollView>
+</ui:UXML>
