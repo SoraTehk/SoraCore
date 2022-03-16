@@ -10,7 +10,7 @@ namespace SoraCore.EditorTools
 
     public partial class LevelSelectorWindow
     {
-        public static string EditorPrefsKey { get; private set; }
+        public static string EditorPrefsKey { get; private set; } // OnEnable();
 
         private Data _data;
 
@@ -72,8 +72,8 @@ namespace SoraCore.EditorTools
         [Serializable]
         private class LevelContext
         {
-            public bool Visible;
-            public int Order;
+            public bool IsVisible;
+            public bool IsPersistent;
             public string GUID;
 
             [NonSerialized]
@@ -83,7 +83,9 @@ namespace SoraCore.EditorTools
         [Serializable]
         private class Data
         {
-            public List<LevelContext> _levelContexts;
+            public List<LevelContext> LevelContexts;
+            public InteractingType InteractBehaviourType;
+            public bool AdditiveToggle;
         }
     }
 }

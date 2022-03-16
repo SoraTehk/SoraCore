@@ -6,15 +6,11 @@ namespace SoraCore.EditorTools
     public class VisibleLevelListEntryController
     {
         public ObjectField LevelSOField { get; private set; }
-        public Button SingleButton { get; private set; }
-        public Button FullButton { get; private set; }
-        public Button Unloadbutton { get; private set; }
+        public Toggle AlwaysToggle { get; set; }
         public VisibleLevelListEntryController(VisualElement ve)
         {
             LevelSOField = ve.Q<ObjectField>("LevelSO-field");
-            SingleButton = ve.Q<Button>("single-button");
-            FullButton = ve.Q<Button>("full-button");
-            Unloadbutton = ve.Q<Button>("unload-button");
+            AlwaysToggle = ve.Q<Toggle>("always-toggle");
         }
     }
 }

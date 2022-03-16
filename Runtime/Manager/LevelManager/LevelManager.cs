@@ -200,6 +200,27 @@ namespace SoraCore.Manager {
             }
             #endregion
         }
+
+        public static void GetSubLevels(LevelSO level, ref UniqueLinkedList<LevelSO> result)
+        {
+            AddLevelToList(level, ref result); // Recursive
+
+            #region Local Functions
+            static void AddLevelToList(LevelSO input, ref UniqueLinkedList<LevelSO> result)
+            {
+                // Firstly, add this sub-levels
+                foreach (var level in input.SubLevels)
+                {
+                    result.AddLast(level);
+                }
+                // Secondly, process it sub-levels
+                foreach (var level in input.SubLevels)
+                {
+                    AddLevelToList(level, ref result);
+                }
+            }
+            #endregion
+        }
     }
 
     public struct LoadContext {

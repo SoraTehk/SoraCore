@@ -33,7 +33,6 @@
             return item;
         }
 
-
         public void Clear() {
             _hashSet.Clear();
             _linkedList.Clear();

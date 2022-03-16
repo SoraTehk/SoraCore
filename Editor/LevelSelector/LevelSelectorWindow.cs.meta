@@ -5,6 +5,8 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - m_ViewDataDictionary: {instanceID: 0}
+  - LevelSelectorUXML: {fileID: 9197481963319205126, guid: 975aaeba9a0bdae409a7de7947233312,
+      type: 3}
   - VisibleListEntryUXML: {fileID: 9197481963319205126, guid: 23233094bdb9ac14c98720889252f439,
       type: 3}
   - LevelListUXML: {fileID: 9197481963319205126, guid: bff7357e016b06a489052164aefc23c3,

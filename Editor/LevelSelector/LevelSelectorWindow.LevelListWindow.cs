@@ -89,10 +89,10 @@ namespace SoraCore.EditorTools
                     ctrl.LevelSOField.value = _levelContexts[index].Level;
 
                     // Visiblity in selector toggle
-                    ctrl.IncludeToggle.value = _levelContexts[index].Visible;
+                    ctrl.IncludeToggle.value = _levelContexts[index].IsVisible;
                     ctrl.IncludeToggle.RegisterValueChangedCallback(evt =>
                     {
-                        _levelContexts[index].Visible = evt.newValue;
+                        _levelContexts[index].IsVisible = evt.newValue;
                         _selector.RefreshListView();
                     });
                 };
