@@ -7,9 +7,9 @@ public class GameplayUIController : MonoBehaviour
 {
     [field: SerializeField, AutoProperty] public UIDocument Document { get; private set; }
 
-    [SerializeField] private LevelSO _menuLevel;
+    [SerializeField] private LevelSO _nextLevel;
 
-    private Button _menuButton;
+    private Button _nextBtn;
     private Button _saveButton;
     private Button _loadButton;
     private TextField _fileNameField;
@@ -24,8 +24,8 @@ public class GameplayUIController : MonoBehaviour
 
     private void OnEnable()
     {
-        _menuButton = Document.rootVisualElement.Q<Button>("menu-button");
-        _menuButton.clicked += OnMenuButtonClicked;
+        _nextBtn = Document.rootVisualElement.Q<Button>("next-btn");
+        _nextBtn.clicked += OnMenuButtonClicked;
 
         _saveButton = Document.rootVisualElement.Q<Button>("save-button");
         _saveButton.clicked += OnSaveButtonClicked;
@@ -42,14 +42,14 @@ public class GameplayUIController : MonoBehaviour
 
     private void OnDisable()
     {
-        _menuButton.clicked -= OnMenuButtonClicked;
+        _nextBtn.clicked -= OnMenuButtonClicked;
         _saveButton.clicked -= OnSaveButtonClicked;
         _loadButton.clicked -= OnLoadButtonClicked;
     }
 
     private void OnMenuButtonClicked()
     {
-        LevelManager.LoadLevel(_menuLevel, true, true, true);
+        LevelManager.LoadLevel(_nextLevel, true, true, true);
     }
 
     private void OnSaveButtonClicked()

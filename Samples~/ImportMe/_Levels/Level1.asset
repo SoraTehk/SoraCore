@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0c8df776bbd1fc4ea384b4481f15de6, type: 3}
-  m_Name: IngameExtension3
+  m_Name: Level1
   m_EditorClassIdentifier: 
   <SceneReference>k__BackingField:
-    m_AssetGUID: f3c9619770d13794e8206484b9e38ffe
+    m_AssetGUID: 293be818ec6592b4395ac92e3a8cacd0
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  <SubLevels>k__BackingField: []
+  <PreloadBlueprints>k__BackingField:
+  - {fileID: 11400000, guid: bdafe1ced9e0d0742a77ba584faa29bf, type: 2}
+  - {fileID: 11400000, guid: 3ae6295317a5fcc4a91b3766c5f204a4, type: 2}
+  <SubLevels>k__BackingField:
+  - {fileID: 11400000, guid: 63c6fc07a5f515141835db7aed4ca508, type: 2}
+  - {fileID: 11400000, guid: db0cc8cb50113d54f9af81120ea61b21, type: 2}

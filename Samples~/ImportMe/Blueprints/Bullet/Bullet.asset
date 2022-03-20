@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7fc4d1126866e04d8fff24b12e69015, type: 3}
+  m_Script: {fileID: 11500000, guid: d0688a71666b4f048af4fc0813cfd8b2, type: 3}
   m_Name: Bullet
   m_EditorClassIdentifier: 
-  <AssetRef>k__BackingField:
-    m_AssetGUID: 36bf412203e21a842b5fee650ac5919f
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  <Prefab>k__BackingField: {fileID: 8045970446362305375, guid: 36bf412203e21a842b5fee650ac5919f,
+    type: 3}
+  <GetCallback>k__BackingField: {fileID: 0}
+  <ReleaseCallback>k__BackingField: {fileID: 11400000, guid: 636961d57b4cbbe4aad2c62eb04e7247,
+    type: 2}
+  <DestroyCallback>k__BackingField: {fileID: 0}
   <EnablePooling>k__BackingField: 1
   preload: 10
   capacity: 10

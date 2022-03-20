@@ -1094,7 +1094,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &437710957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1107,9 +1107,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98bfa38c3bc1fb4685e42eb1bffd882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 11400000, guid: 0a03c4d41bbd75044b7ec8d0b0239877, type: 2}
+  _bulletPrefab: {fileID: 11400000, guid: 3ae6295317a5fcc4a91b3766c5f204a4, type: 2}
   _shotAudio: {fileID: 11400000, guid: 0007694f1ea1b3e4899f3941213050b7, type: 2}
-  _spawnRate: 50
+  _spawnRate: 1
   _bulletSpeed:
     Min: 0.1
     Max: 40.289677
@@ -2347,7 +2347,7 @@ PrefabInstance:
     - target: {fileID: 911682274368959823, guid: 4ae8ae152859c42489ff07c8999abcc3,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 911682274368959823, guid: 4ae8ae152859c42489ff07c8999abcc3,
         type: 3}
@@ -2402,7 +2402,7 @@ PrefabInstance:
     - target: {fileID: 3398654685687888338, guid: 4ae8ae152859c42489ff07c8999abcc3,
         type: 3}
       propertyPath: _reload
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3398654685687888338, guid: 4ae8ae152859c42489ff07c8999abcc3,
         type: 3}
@@ -2934,7 +2934,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.9195, y: 1}
+    m_SensorSize: {x: 1.9136727, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2970,7 +2970,7 @@ GameObject:
   - component: {fileID: 2097369010}
   - component: {fileID: 2097369011}
   m_Layer: 0
-  m_Name: IngameController
+  m_Name: GameplayController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2989,7 +2989,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2097369011
 MonoBehaviour:
@@ -3074,7 +3074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Document>k__BackingField: {fileID: 1730293410952815074}
-  _menuLevel: {fileID: 11400000, guid: d8699dfa93862524e95ddffe7d7769a0, type: 2}
+  _nextLevel: {fileID: 11400000, guid: 138a4d57efd05d942bb1e04fe5cdf029, type: 2}
 --- !u!114 &1730293410952815074
 MonoBehaviour:
   m_ObjectHideFlags: 0

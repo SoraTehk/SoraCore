@@ -10,13 +10,11 @@ public class ManagerHooker : MonoBehaviour {
         LevelManager.LoadProgressChanged += OnLoadProgressChanged;
         LevelManager.LoadFinished += OnLoadFinished;
 
-        SoundManager.VolumeChanged += (grp, value) =>
+        AudioManager.VolumeChanged += (grp, value) =>
         {
-            PlayerPrefs.SetFloat($"{nameof(SoundManager)}_{grp.VolumeParameter}", value);
+            PlayerPrefs.SetFloat($"{nameof(AudioManager)}_{grp.VolumeParameter}", value);
             PlayerPrefs.Save();
         };
-
-        Invoke(nameof(ChangeVolume), 3f);
     }
 
     private void OnDisable() {
@@ -26,7 +24,7 @@ public class ManagerHooker : MonoBehaviour {
     }
 
     private void ChangeVolume() {
-        SoundManager.SetVolume(MixerGroup, Random.Range(0f, 1f));
+        AudioManager.SetVolume(MixerGroup, Random.Range(0f, 1f));
     }
     private void OnLoadStarted(LoadContext ctx) {
         LoadingUIController.enabled = ctx.ShowLoadingScreen;

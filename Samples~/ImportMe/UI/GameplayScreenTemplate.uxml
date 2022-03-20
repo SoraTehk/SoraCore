@@ -6,6 +6,6 @@
             <ui:Button text="Load" display-tooltip-when-elided="true" name="load-button" style="flex-grow: 1;" />
             <ui:TextField picking-mode="Ignore" value="fileName" text="fileName" name="file-name-field" style="flex-grow: 2;" />
         </ui:VisualElement>
-        <ui:Button text="Go to Menu" display-tooltip-when-elided="true" name="menu-button" />
+        <ui:Button text="Go next" display-tooltip-when-elided="true" name="next-btn" />
     </ui:VisualElement>
 </ui:UXML>

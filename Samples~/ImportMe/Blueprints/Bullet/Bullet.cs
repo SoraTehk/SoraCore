@@ -18,7 +18,7 @@ public class Bullet : MonoBehaviour, ISaveable {
 
     private void Update() {
         if (Time.time > _despawnTime) {
-            GameObjectManager.Release(gameObject);
+            GameObjectManager.ReleaseInstance(gameObject);
             _despawnTime = float.MaxValue;
         }
     }

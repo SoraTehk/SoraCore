@@ -1,6 +1,7 @@
 using UnityEngine;
+using SoraCore.Manager;
 
-public class IngameController : MonoBehaviour
+public class GameplayController : MonoBehaviour
 {
     [field: SerializeField] public GameplayUIController GameplayUIController { get; private set; }
 

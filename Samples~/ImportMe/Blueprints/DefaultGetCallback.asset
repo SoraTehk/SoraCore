@@ -9,12 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0c8df776bbd1fc4ea384b4481f15de6, type: 3}
-  m_Name: IngameExtension6
+  m_Script: {fileID: 11500000, guid: 393f82a24b9c7c44ba438cd34d33f6d7, type: 3}
+  m_Name: DefaultGetCallback
   m_EditorClassIdentifier: 
-  <SceneReference>k__BackingField:
-    m_AssetGUID: 8b97ebe88acee6c47af733a861bcc88b
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  <SubLevels>k__BackingField: []
