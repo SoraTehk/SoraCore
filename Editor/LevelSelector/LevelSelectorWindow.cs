@@ -172,7 +172,7 @@ namespace SoraCore.EditorTools {
 
         private void UpdatePersistentLevelList()
         {
-            _persistentLevelContexts = (from ctx in _levelContexts
+            _persistentLevelContexts = (from ctx in _visibleLevelContexts
                                         where ctx.IsPersistent
                                         select ctx).ToList();
         }

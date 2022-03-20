@@ -4,36 +4,36 @@ namespace SoraCore.Collections {
 
     // UNDONE: UniqueQueue<T>
     public class UniqueQueue<T> : IEnumerable<T> {
-        private HashSet<T> hashSet;
-        private Queue<T> queue;
+        private readonly HashSet<T> _hashSet;
+        private readonly Queue<T> _queue;
 
         public UniqueQueue() {
-            hashSet = new HashSet<T>();
-            queue = new Queue<T>();
+            _hashSet = new HashSet<T>();
+            _queue = new Queue<T>();
         }
 
-        public int Count => hashSet.Count;
+        public int Count => _hashSet.Count;
         public void Clear() {
-            hashSet.Clear();
-            queue.Clear();
+            _hashSet.Clear();
+            _queue.Clear();
         }
         public bool Contains(T item) {
-            return hashSet.Contains(item);
+            return _hashSet.Contains(item);
         }
 
 
         public void Enqueue(T item) {
-            if (!hashSet.Add(item)) return;
-            queue.Enqueue(item);
+            if (!_hashSet.Add(item)) return;
+            _queue.Enqueue(item);
         }
         public T Dequeue() {
-            T item = queue.Dequeue();
-            hashSet.Remove(item);
+            T item = _queue.Dequeue();
+            _hashSet.Remove(item);
             return item;
         }
-        public T Peek() => queue.Peek();
+        public T Peek() => _queue.Peek();
 
-        public IEnumerator<T> GetEnumerator() => queue.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => queue.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => _queue.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _queue.GetEnumerator();
     }
 }

@@ -52,7 +52,7 @@ namespace SoraCore.Manager {
             _loadRequested -= InnerLoad;
         }
 
-        // REFACTOR: Kinda work but code look messy
+        // REFACTOR: Look messy
         #region SaveableController, ISaveable
         
         public void InnerSave(string fileName) {

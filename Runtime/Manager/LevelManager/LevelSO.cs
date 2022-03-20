@@ -35,12 +35,8 @@ namespace SoraCore.Manager {
     public partial class LevelSO : ScriptableObject {
         [field: AssetReferenceUILabelRestriction("Scene")]
         [field: SerializeField] public AssetReference SceneReference { get; private set; }
-
-#if PREFAB_UTILITIES
-        [field: SerializeField] public List<PrefabSO> PreloadPrefabList { get; private set; }
-#endif
-
-        [field: SerializeField]  public List<LevelSO> SubLevels { get; private set; }
+        [field: SerializeField] public List<BlueprintSO> PreloadBlueprints { get; private set; }
+        [field: SerializeField] public List<LevelSO> SubLevels { get; private set; }
     }
 
 

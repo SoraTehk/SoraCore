@@ -2,7 +2,7 @@ namespace SoraCore.Manager {
     using UnityEngine;
 
     [CreateAssetMenu(fileName = "AudioData", menuName = "SoraCore/Sound Manager/Audio Data", order = 51)]
-    public class AudioSO : ScriptableObject {
+    public class AudioCueSO : ScriptableObject {
         public enum SequenceMode {
             Random,
             RandomNoImmediateRepeat,
@@ -12,7 +12,7 @@ namespace SoraCore.Manager {
         [field: SerializeField] public MixerGroupSO MixerGroup { get; private set; }
         [field: SerializeField] public bool Loop { get; private set; } = false;
 
-        // TODO: Code SequenceMode logic
+        // TODO: SequenceMode logic
         [SerializeField] private SequenceMode _sequenceMode = SequenceMode.RandomNoImmediateRepeat;
         [SerializeField] private AudioClip[] _audioClips = null;
 

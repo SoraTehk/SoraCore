@@ -12,7 +12,6 @@ namespace SoraCore.Manager {
             string s1 = $"[{callerType}]".Bold();
             string s2 = $"{callerName}()".Bold();
 
-            // UNDONE: Log more info
             Debug.LogWarning($"{SoraWarning}{s1.Color("white")}: {s2} was requested but no {s1} picked it up.\n Make sure the persistent scene are fully loaded before method calls");
         }
     }

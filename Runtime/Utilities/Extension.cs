@@ -1,25 +1,9 @@
-using static SoraCore.Constant;
-
 namespace SoraCore.Extension {
     using System;
-    using System.Collections.Generic;
     using UnityEngine;
-    
-    using Debug = UnityEngine.Debug;
     using Object = UnityEngine.Object;
 
     public static partial class Extension {
-        private static readonly System.Random _random = new();
-        ///<summary>
-        /// Shuffle this list
-        ///</summary>
-        public static void Shuffle<T>(this IList<T> list) {
-            for (int i = list.Count; i > 1; i--) {
-                int j = _random.Next(i + 1);
-                (list[i], list[j]) = (list[j], list[i]);
-            }
-        }
-
         /// <summary>
         /// <see cref="Component.GetComponent{T}()"/> but with null checking
         /// </summary>
@@ -33,7 +17,7 @@ namespace SoraCore.Extension {
         public static T[] GetComponentsNullCheck<T>(this Component transform, Object debugContext = null) where T : Component {
             // If the transfrom are null then return
             if (!transform) {
-                Debug.LogError($"{SoraNull}: <b>transform</b> are null.", debugContext);
+                SoraCore.LogNull("<b>transform</b> are null.", nameof(transform), debugContext);
                 return null;
             }
 
@@ -42,7 +26,9 @@ namespace SoraCore.Extension {
             if (components.Length > 0) return components;
 
             // Cant find any T in transform
-            Debug.LogError($"{SoraNull}: Cant find any <b>{typeof(T).Name}</b>(type) in <b>{transform.name}</b>.", transform);
+            string s1 = typeof(T).Name.Bold();
+            string s2 = transform.name.Bold();
+            SoraCore.LogNull($"Cant find any {s1}(type) in {s2}.", nameof(transform), transform);
             return null;
         }
 

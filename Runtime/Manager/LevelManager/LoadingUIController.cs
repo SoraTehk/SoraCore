@@ -19,7 +19,7 @@ namespace SoraCore.Manager {
         }
 
         private void Update() {
-            // TODO: Make the progress bar smoother
+            // TODO: Smoother progress bar
             _mainProgressBar.value = MainProgress;
             _subProgressBar.value = SubProgress;
         }

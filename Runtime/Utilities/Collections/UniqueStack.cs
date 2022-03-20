@@ -2,38 +2,38 @@
     using System.Collections;
     using System.Collections.Generic;
 
-    // UNDONE: UniqueQueue<T>
+    // UNDONE: UniqueStack<T>
     public class UniqueStack<T> : IEnumerable<T> {
-        private HashSet<T> hashSet;
-        private Stack<T> stack;
+        private readonly HashSet<T> _hashSet;
+        private readonly Stack<T> _stack;
 
         public UniqueStack() {
-            hashSet = new HashSet<T>();
-            stack = new Stack<T>();
+            _hashSet = new HashSet<T>();
+            _stack = new Stack<T>();
         }
 
-        public int Count => hashSet.Count;
+        public int Count => _hashSet.Count;
         public void Clear() {
-            hashSet.Clear();
-            stack.Clear();
+            _hashSet.Clear();
+            _stack.Clear();
         }
         public bool Contains(T item) {
-            return hashSet.Contains(item);
+            return _hashSet.Contains(item);
         }
 
 
         public void Push(T item) {
-            if (!hashSet.Add(item)) return;
-            stack.Push(item);
+            if (!_hashSet.Add(item)) return;
+            _stack.Push(item);
         }
         public T Pop() {
-            T item = stack.Pop();
-            hashSet.Remove(item);
+            T item = _stack.Pop();
+            _hashSet.Remove(item);
             return item;
         }
-        public T Peek() => stack.Peek();
+        public T Peek() => _stack.Peek();
 
-        public IEnumerator<T> GetEnumerator() => stack.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => stack.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => _stack.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _stack.GetEnumerator();
     }
 }
