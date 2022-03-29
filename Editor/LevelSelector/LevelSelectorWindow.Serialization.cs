@@ -61,7 +61,6 @@ namespace SoraCore.EditorTools
                     string path = AssetDatabase.GUIDToAssetPath(_levelContexts[i].GUID);
                     _levelContexts[i].Level = AssetDatabase.LoadAssetAtPath<LevelSO>(path);
 
-                    Debug.Log(_levelContexts[i].Level.name + $" is null: {_levelContexts[i].Level == null}");
                     if (_levelContexts[i].Level == null) _levelContexts.RemoveAt(i);
                 }
             }

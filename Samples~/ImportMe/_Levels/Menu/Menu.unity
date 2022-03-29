@@ -192,12 +192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3398654685687888338, guid: 4ae8ae152859c42489ff07c8999abcc3,
         type: 3}
-      propertyPath: _reload
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3398654685687888338, guid: 4ae8ae152859c42489ff07c8999abcc3,
-        type: 3}
-      propertyPath: _thisScene
+      propertyPath: _thisLevel
       value: 
       objectReference: {fileID: 11400000, guid: d8699dfa93862524e95ddffe7d7769a0,
         type: 2}
