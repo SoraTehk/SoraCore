@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace SoraCore.EditorTools
 {
 	using System.Collections.Generic;
@@ -40,3 +41,4 @@ namespace SoraCore.EditorTools
 		}
 	}
 }
+#endif
