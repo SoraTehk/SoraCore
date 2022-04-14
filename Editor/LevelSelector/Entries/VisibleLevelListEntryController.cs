@@ -7,6 +7,7 @@ namespace SoraCore.EditorTools
     {
         public ObjectField LevelSOField { get; private set; }
         public Toggle AlwaysToggle { get; set; }
+
         public VisibleLevelListEntryController(VisualElement ve)
         {
             LevelSOField = ve.Q<ObjectField>("LevelSO-field");

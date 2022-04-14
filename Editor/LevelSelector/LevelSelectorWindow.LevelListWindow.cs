@@ -1,16 +1,9 @@
-using SoraCore.Collections;
-using SoraCore.Manager;
-
 namespace SoraCore.EditorTools
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using UnityEditor;
-    using UnityEditor.SceneManagement;
-    using UnityEngine;
-    using UnityEngine.SceneManagement;
     using UnityEngine.UIElements;
 
     public partial class LevelSelectorWindow
@@ -30,23 +23,23 @@ namespace SoraCore.EditorTools
             }
             #endregion
 
-            private List<LevelContext> _levelContexts
+            private List<LevelContext> m_LevelContexts
             {
-                get => _selector._levelContexts;
-                set => _selector._levelContexts = value;
+                get => m_Selector.m_LevelContexts;
+                set => m_Selector.m_LevelContexts = value;
             }
 
-            private LevelSelectorWindow _selector;
-            private ListView _listView;
+            private LevelSelectorWindow m_Selector;
+            private ListView m_ListView;
 
-            public void Init(LevelSelectorWindow selector) => _selector = selector;
+            public void Init(LevelSelectorWindow selector) => m_Selector = selector;
 
 
             private async void CreateGUI()
             {
                 // Race condition when using GetWindow<T> so we have to await
                 Task timeOutTask = Task.Delay(timeOutInMili);
-                while (_selector is null)
+                while (m_Selector is null)
                 {
                     await Task.Yield();
                     if (timeOutTask.IsCompleted)
@@ -58,52 +51,52 @@ namespace SoraCore.EditorTools
                     }
                 }
 
-                TemplateContainer root = _selector.LevelListUXML.Instantiate();
+                TemplateContainer root = m_Selector.LevelListUXML.Instantiate();
                 rootVisualElement.Add(root);
 
                 // Level list view
-                _listView = root.Q<ListView>("level-lv");
+                m_ListView = root.Q<ListView>("level-lv");
                 SetupListView();
 
                 // Refresh button
                 root.Q<Button>("refresh-btn").clicked += () =>
                 {
-                    _selector.RefreshData();
+                    m_Selector.RefreshData();
                     RefreshListView();
                 };
             }
 
             private void SetupListView()
             {
-                _listView.makeItem = () =>
+                m_ListView.makeItem = () =>
                 {
-                    TemplateContainer entry = _selector.LevelListEntryUXML.Instantiate();
+                    TemplateContainer entry = m_Selector.LevelListEntryUXML.Instantiate();
                     entry.userData = new LevelListEntryController(entry);
                     return entry;
                 };
-                _listView.bindItem = (item, index) =>
+                m_ListView.bindItem = (item, index) =>
                 {
                     var ctrl = item.userData as LevelListEntryController;
 
                     // Object field
-                    ctrl.LevelSOField.value = _levelContexts[index].Level;
+                    ctrl.LevelSOField.value = m_LevelContexts[index].Level;
 
                     // Visiblity in selector toggle
-                    ctrl.IncludeToggle.value = _levelContexts[index].IsVisible;
+                    ctrl.IncludeToggle.value = m_LevelContexts[index].IsVisible;
                     ctrl.IncludeToggle.RegisterValueChangedCallback(evt =>
                     {
-                        _levelContexts[index].IsVisible = evt.newValue;
-                        _selector.RefreshListView();
+                        m_LevelContexts[index].IsVisible = evt.newValue;
+                        m_Selector.RefreshListView();
                     });
                 };
-                
+
                 RefreshListView();
             }
 
             private void RefreshListView()
             {
-                _listView.itemsSource = _selector._levelContexts;
-                _listView.RefreshItems();
+                m_ListView.itemsSource = m_Selector.m_LevelContexts;
+                m_ListView.RefreshItems();
             }
         }
     }

@@ -1,5 +1,7 @@
-namespace SoraCore {
-    public static class Constant {
+namespace SoraCore
+{
+    public static class Constant
+    {
         public const char CHAR_SYNCHRONOUS_IDLE = '?';
         public const string SoraLog = "<b><color=lime>[Sora:Info]</color></b>";
         public const string SoraWarning = "<b><color=yellow>[Sora:Warning]</color></b>";

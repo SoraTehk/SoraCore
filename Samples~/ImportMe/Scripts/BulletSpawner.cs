@@ -1,11 +1,13 @@
 using MyBox;
 using SoraCore;
-using SoraCore.Manager;
+using SoraCore.Manager.Audio;
+using SoraCore.Manager.Instantiate;
 using UnityEngine;
 
-public class BulletSpawner : MonoBehaviour {
-    [SerializeField] private BlueprintSO _bulletPrefab;
-    [SerializeField] private AudioCueSO _shotAudio;
+public class BulletSpawner : MonoBehaviour
+{
+    [SerializeField] private BlueprintAsset _bulletPrefab;
+    [SerializeField] private AudioCueAsset _shotAudio;
     [OverrideLabel("Spawn Rate (x/s)")]
     [Range(0.01f, 100)]
     [SerializeField] private float _spawnRate;
@@ -15,11 +17,13 @@ public class BulletSpawner : MonoBehaviour {
 
     private float _nextSpawnTime;
 
-    private void Update() {
-        if (Time.timeSinceLevelLoad >= _nextSpawnTime) {
+    private void Update()
+    {
+        if (Time.timeSinceLevelLoad >= _nextSpawnTime)
+        {
             // Spawn a disabled bullet
-            GameObject gObj = GameObjectManager.Get(_bulletPrefab);
-            
+            GameObject gObj = InstantiateManager.Get(_bulletPrefab);
+
             // Calculate random pos in mesh (local & normalized)
             Vector3 pointOnMeshLocPosNormalized = Math.GetRandomPointOnMesh(_mesh);
             // Set bullet pos
@@ -38,7 +42,8 @@ public class BulletSpawner : MonoBehaviour {
         }
     }
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmos()
+    {
         Gizmos.color = new Color(1f, 0.5f, 0.5f, 0.5f);
         if (_mesh != null) Gizmos.DrawMesh(_mesh, transform.position, transform.rotation, transform.lossyScale);
     }

@@ -1,9 +1,11 @@
-namespace SoraCore.Extension {
+namespace SoraCore.Extension
+{
     using System;
     using UnityEngine;
     using Object = UnityEngine.Object;
 
-    public static partial class Extension {
+    public static partial class Extension
+    {
         /// <summary>
         /// <see cref="Component.GetComponent{T}()"/> but with null checking
         /// </summary>
@@ -14,9 +16,11 @@ namespace SoraCore.Extension {
         /// <summary>
         /// <see cref="Component.GetComponents{T}()"/> but with null checking
         /// </summary>
-        public static T[] GetComponentsNullCheck<T>(this Component transform, Object debugContext = null) where T : Component {
+        public static T[] GetComponentsNullCheck<T>(this Component transform, Object debugContext = null) where T : Component
+        {
             // If the transfrom are null then return
-            if (!transform) {
+            if (!transform)
+            {
                 SoraCore.LogNull("<b>transform</b> are null.", nameof(transform), debugContext);
                 return null;
             }

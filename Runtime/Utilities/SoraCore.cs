@@ -1,11 +1,13 @@
-namespace SoraCore {
-    using System.Text;
+namespace SoraCore
+{
     using System.Collections.Concurrent;
+    using System.Text;
 
     /// <summary>
     /// Simple string builder pool with <see cref="ConcurrentBag{T}"/>
     /// </summary>
-    public static class StringBuilderPool {
+    public static class StringBuilderPool
+    {
 
         const int INITIALIZE_SIZE = 1;
         const int CAPACITY = 256;
@@ -15,9 +17,11 @@ namespace SoraCore {
         /// <summary>
         /// Rebuild the pool from scratch
         /// </summary>
-        public static void Reset() {
+        public static void Reset()
+        {
             _poolBag = new ConcurrentBag<StringBuilder>();
-            for (int i = 0; i < INITIALIZE_SIZE; i++) {
+            for (int i = 0; i < INITIALIZE_SIZE; i++)
+            {
                 _poolBag.Add(new StringBuilder(CAPACITY));
             }
         }
@@ -25,8 +29,10 @@ namespace SoraCore {
         /// <summary>
         /// Get a <see cref="StringBuilder"/> from the pool
         /// </summary>
-        public static StringBuilder Get() {
-            if (!_poolBag.TryTake(out StringBuilder sb)) {
+        public static StringBuilder Get()
+        {
+            if (!_poolBag.TryTake(out StringBuilder sb))
+            {
                 sb = new StringBuilder(CAPACITY);
             }
 
@@ -36,7 +42,8 @@ namespace SoraCore {
         /// <summary>
         /// Return a <see cref="StringBuilder"/> to the pool
         /// </summary>
-        public static void Return(StringBuilder sb) {
+        public static void Return(StringBuilder sb)
+        {
             sb.Clear();
             _poolBag.Add(sb);
         }

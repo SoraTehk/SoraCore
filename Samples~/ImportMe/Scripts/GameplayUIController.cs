@@ -1,5 +1,6 @@
 using MyBox;
-using SoraCore.Manager;
+using SoraCore.Manager.Level;
+using SoraCore.Manager.Serialization;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,7 +8,7 @@ public class GameplayUIController : MonoBehaviour
 {
     [field: SerializeField, AutoProperty] public UIDocument Document { get; private set; }
 
-    [SerializeField] private LevelSO _nextLevel;
+    [SerializeField] private LevelAsset _nextLevel;
 
     private Button _nextBtn;
     private Button _saveButton;

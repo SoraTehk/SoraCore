@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:VisualElement name="root" style="flex-direction: row;">
-        <uie:ObjectField name="LevelSO-field" type="SoraCore.Manager.LevelSO, SoraCore" style="flex-grow: 1;" />
+        <uie:ObjectField name="LevelSO-field" type="SoraCore.Manager.Level.LevelAsset, SoraCore" style="flex-grow: 1;" />
         <ui:Toggle name="always-toggle" tooltip="Make this always loaded additively with selected level" />
     </ui:VisualElement>
 </ui:UXML>

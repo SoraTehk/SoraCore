@@ -1,30 +1,33 @@
-namespace SoraCore.Manager {
-    using MyBox;
+using SoraCore.Manager.Level;
+
+namespace SoraCore.Manager
+{
     using UnityEngine;
-    using UnityEngine.AddressableAssets;
-    using UnityEngine.AddressableAssets.ResourceLocators;
     using UnityEngine.ResourceManagement.AsyncOperations;
     using UnityEngine.ResourceManagement.ResourceProviders;
     using UnityEngine.SceneManagement;
 
-    public class Initializer : MonoBehaviour {
-        [SerializeField] private LevelSO _persistentLevel;
-        [SerializeField] private LevelSO _levelToLoad;
-        
-        private void Awake() {
+    public class Initializer : MonoBehaviour
+    {
+        [field: SerializeField] public LevelAsset PersistentLevel { get; private set; }
+        [field: SerializeField] public LevelAsset LevelToLoad { get; private set; }
+
+        private void Awake()
+        {
 #if UNITY_EDITOR
-            Editor.EditorInitializer.IsColdStart = false;
+            EditorTools.EditorInitializer.IsColdStart = false;
 #endif
-            _persistentLevel.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += OnPersistentLevelLoaded;
+            PersistentLevel.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += OnPersistentLevelLoaded;
 
         }
 
-        private void OnPersistentLevelLoaded(AsyncOperationHandle<SceneInstance> obj) {
+        private void OnPersistentLevelLoaded(AsyncOperationHandle<SceneInstance> obj)
+        {
             SceneManager.SetActiveScene(obj.Result.Scene);
             SceneManager.UnloadSceneAsync(0);
 
             //SoundManager.LoadPlayerPrefsAll();
-            LevelManager.LoadLevel(_levelToLoad);
+            LevelManager.LoadLevel(LevelToLoad);
         }
     }
 }

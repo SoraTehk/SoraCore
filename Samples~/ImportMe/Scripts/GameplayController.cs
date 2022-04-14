@@ -1,5 +1,4 @@
 using UnityEngine;
-using SoraCore.Manager;
 
 public class GameplayController : MonoBehaviour
 {

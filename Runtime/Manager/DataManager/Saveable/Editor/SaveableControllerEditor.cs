@@ -1,5 +1,5 @@
-namespace SoraCore.Manager {
-    using UnityEditor;
+namespace SoraCore.Manager.Serialization
+{
 
     //[CustomEditor(typeof(SaveableController))]
     //public class SaveableControllerEditor : Editor {

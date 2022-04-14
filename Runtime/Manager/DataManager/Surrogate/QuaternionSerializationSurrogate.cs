@@ -1,9 +1,12 @@
-namespace SoraCore.Manager {
+namespace SoraCore.Manager.Serialization
+{
     using System.Runtime.Serialization;
     using UnityEngine;
 
-    public class QuaternionSerializationSurrogate : ISerializationSurrogate {
-        public void GetObjectData(object obj, SerializationInfo info, StreamingContext context) {
+    public class QuaternionSerializationSurrogate : ISerializationSurrogate
+    {
+        public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+        {
             var quat = (Quaternion)obj;
             info.AddValue("x", quat.x);
             info.AddValue("y", quat.y);
@@ -12,7 +15,8 @@ namespace SoraCore.Manager {
 
         }
 
-        public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
+        public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+        {
             var quat = (Quaternion)obj;
             quat.x = (float)info.GetValue("x", typeof(float));
             quat.y = (float)info.GetValue("y", typeof(float));

@@ -1,5 +1,5 @@
 using CommandTerminal;
-using SoraCore.Manager;
+using SoraCore.Manager.Instantiate;
 using UnityEngine;
 using System.Collections.Generic;
 using MyBox;
@@ -12,7 +12,7 @@ public partial class TerminalCommand
     [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
     private void FindBlueprints()
     {
-        Blueprints = SoraCore.EditorTools.EditorHelper.FindAssetsOfType<BlueprintSO>();
+        Blueprints = SoraCore.EditorTools.EditorHelper.FindAssetsOfType<BlueprintAsset>();
         EditorUtility.SetDirty(this);
     }
 }
@@ -21,7 +21,7 @@ public partial class TerminalCommand
 
 public partial class TerminalCommand : MonoBehaviour
 {
-    [field: SerializeField] public List<BlueprintSO> Blueprints { get; private set; }
+    [field: SerializeField] public List<BlueprintAsset> Blueprints { get; private set; }
 
     private void Awake()
     {
@@ -35,19 +35,19 @@ public partial class TerminalCommand : MonoBehaviour
     {
         if (Terminal.IssuedError) return;
         var bd = Blueprints[args[0].Int];
-        GameObjectManager.Preload(bd);
+        InstantiateManager.Preload(bd);
     }
 
     private void GameObjectManagerClear(CommandArg[] args)
     {
         if (Terminal.IssuedError) return;
         var bd = Blueprints[args[0].Int];
-        GameObjectManager.Clear(bd);
+        InstantiateManager.Clear(bd);
     }
 
     private void GameObjectManagerClearAll(CommandArg[] args)
     {
         if (Terminal.IssuedError) return;
-        GameObjectManager.ClearAll();
+        InstantiateManager.ClearAll();
     }
 }

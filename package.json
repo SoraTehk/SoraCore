@@ -1,6 +1,6 @@
 {
     "name": "com.huysora.soracore",
-    "version": "1.8.12",
+    "version": "1.8.13",
     "displayName": "SoraCore",
     "description": "Unity Package for my repeatable needs",
     "unity": "2021.2",

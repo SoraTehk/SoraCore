@@ -1,16 +1,20 @@
-namespace SoraCore.Manager {
+namespace SoraCore.Manager.Serialization
+{
     using System.Runtime.Serialization;
     using UnityEngine;
 
-    public class Vector3SerializationSurrogate : ISerializationSurrogate {
-        public void GetObjectData(object obj, SerializationInfo info, StreamingContext context) {
+    public class Vector3SerializationSurrogate : ISerializationSurrogate
+    {
+        public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+        {
             var v3 = (Vector3)obj;
             info.AddValue("x", v3.x);
             info.AddValue("y", v3.y);
             info.AddValue("z", v3.z);
         }
 
-        public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
+        public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+        {
             var v3 = (Vector3)obj;
             v3.x = (float)info.GetValue("x", typeof(float));
             v3.y = (float)info.GetValue("y", typeof(float));

@@ -1,52 +1,34 @@
-using SoraCore.Collections;
-
-namespace SoraCore.Manager {
+namespace SoraCore.Manager.Game
+{
     using System;
     using UnityEngine;
 
-    public enum GameState {
+    public enum GameState
+    {
         Playing,
         Pausing,
         Loading
     }
 
-    public class GameManager : SoraManager {
-
+    public class GameManager : SoraManager<GameManager>
+    {
         #region Static -------------------------------------------------------------------------------------------------------
-
-        private static Action<GameState> _changeGameStateRequested;
-        public static void ChangeGameState(GameState gameState) {
-            if (_changeGameStateRequested != null) {
-                _changeGameStateRequested.Invoke(gameState);
-                return;
-            }
-
-            LogWarningForEvent(nameof(GameManager));
-        }
-
+        public static void ChangeGameState(GameState gameState) => GetInstance().InnerChangeGameState(gameState);
         #endregion
 
-        [Range(1, 600)]
-        public int TargetFPS = 600;
+        [field: Range(1, 600)]
+        [field: SerializeField] public int TargetFPS { get; private set; } = 600;
 
         [field: SerializeField] public GameState CurrentGameState { get; private set; }
         [field: SerializeField] public float CurrentTimeScale { get; private set; } = 1f;
 
-
-        private void OnEnable() {
-            _changeGameStateRequested += InnerChangeGameState;
-        }
-
-        private void OnDisable() {
-            _changeGameStateRequested -= InnerChangeGameState;
-        }
-
-
         #region GameState ----------------------------------------------------------------------------------------------------
-        private void InnerChangeGameState(GameState newGameState) {
+        private void InnerChangeGameState(GameState newGameState)
+        {
             if (CurrentGameState == newGameState) return;
 
-            switch (newGameState) {
+            switch (newGameState)
+            {
                 case GameState.Pausing: PauseGame(); break;
                 case GameState.Playing or GameState.Loading: ResumeGame(); break;
                 default: throw new ArgumentOutOfRangeException(nameof(newGameState), $"Not expected GameState value: {newGameState}");
@@ -55,19 +37,20 @@ namespace SoraCore.Manager {
             CurrentGameState = newGameState;
         }
 
-        private void PauseGame() {
+        private void PauseGame()
+        {
             // Store current timescale for resuming
             CurrentTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             AudioListener.pause = true;
         }
 
-        private void ResumeGame() {
+        private void ResumeGame()
+        {
             //Resuming timescale
             Time.timeScale = CurrentTimeScale;
             AudioListener.pause = false;
         }
         #endregion
-
     }
 }

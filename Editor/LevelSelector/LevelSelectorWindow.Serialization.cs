@@ -1,23 +1,21 @@
-using SoraCore.Manager;
-
 namespace SoraCore.EditorTools
 {
+    using Manager.Level;
     using System;
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEditor;
-    using UnityEngine;
 
     public partial class LevelSelectorWindow
     {
         public static string EditorPrefsKey { get; private set; } // OnEnable();
 
-        private Data _data;
+        private Data m_Data;
 
         private void RefreshData()
         {
-            Dictionary<string, LevelContext> dataGUIDs = _levelContexts.ToDictionary(ctx => ctx.GUID);
-            string[] projectGUIDs = EditorHelper.FindAssetsGUIDOfType<LevelSO>();
+            Dictionary<string, LevelContext> dataGUIDs = m_LevelContexts.ToDictionary(ctx => ctx.GUID);
+            string[] projectGUIDs = EditorHelper.FindAssetsGUIDOfType<LevelAsset>();
 
             // Iterating through all the GUIDs in the project
             foreach (string guid in projectGUIDs)
@@ -30,43 +28,43 @@ namespace SoraCore.EditorTools
                 }
 
                 // Only add if not contained
-                _levelContexts.Add(new LevelContext()
+                m_LevelContexts.Add(new LevelContext()
                 {
                     GUID = guid,
-                    Level = AssetDatabase.LoadAssetAtPath<LevelSO>(AssetDatabase.GUIDToAssetPath(guid))
+                    Level = AssetDatabase.LoadAssetAtPath<LevelAsset>(AssetDatabase.GUIDToAssetPath(guid))
                 });
             }
 
             // Remove non matching GUIDs (null/deleted/changed)
-            foreach (LevelContext ctx in dataGUIDs.Values) { _levelContexts.Remove(ctx); }
+            foreach (LevelContext ctx in dataGUIDs.Values) { m_LevelContexts.Remove(ctx); }
         }
 
         private void SaveData()
         {
-            string ctxAsJson = EditorJsonUtility.ToJson(_data);
+            string ctxAsJson = EditorJsonUtility.ToJson(m_Data);
             EditorPrefs.SetString(EditorPrefsKey, ctxAsJson);
         }
 
         private void LoadData()
         {
-            _data = new();
+            m_Data = new();
             if (EditorPrefs.HasKey(EditorPrefsKey))
             {
                 string ctxAsJson = EditorPrefs.GetString(EditorPrefsKey);
-                EditorJsonUtility.FromJsonOverwrite(ctxAsJson, _data);
+                EditorJsonUtility.FromJsonOverwrite(ctxAsJson, m_Data);
 
                 // Assign the correct asset instance since ScriptableObject can't be serialized
-                for (int i = _levelContexts.Count - 1; i >= 0; i--)
+                for (int i = m_LevelContexts.Count - 1; i >= 0; i--)
                 {
-                    string path = AssetDatabase.GUIDToAssetPath(_levelContexts[i].GUID);
-                    _levelContexts[i].Level = AssetDatabase.LoadAssetAtPath<LevelSO>(path);
+                    string path = AssetDatabase.GUIDToAssetPath(m_LevelContexts[i].GUID);
+                    m_LevelContexts[i].Level = AssetDatabase.LoadAssetAtPath<LevelAsset>(path);
 
-                    if (_levelContexts[i].Level == null) _levelContexts.RemoveAt(i);
+                    if (m_LevelContexts[i].Level == null) m_LevelContexts.RemoveAt(i);
                 }
             }
             else
             {
-                _levelContexts = new();
+                m_LevelContexts = new();
             }
 
             RefreshData();
@@ -80,7 +78,7 @@ namespace SoraCore.EditorTools
             public string GUID;
 
             [NonSerialized]
-            public LevelSO Level;
+            public LevelAsset Level;
         }
 
         [Serializable]

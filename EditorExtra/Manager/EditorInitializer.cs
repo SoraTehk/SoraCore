@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
-namespace SoraCore.Manager.Editor
+using SoraCore.Manager.Level;
+
+namespace SoraCore.Manager.EditorTools
 {
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -8,28 +10,28 @@ namespace SoraCore.Manager.Editor
     {
         public static bool IsColdStart = true;
 
-        [SerializeField] private LevelSO _thisLevel;
-        [SerializeField] private bool _reload;
-        [SerializeField] private LevelSO _persistentLevel;
+        [field: SerializeField] public LevelAsset ThisLevel { get; private set; }
+        [field: SerializeField] public bool DoReload { get; private set; }
+        [field: SerializeField] public LevelAsset PersistentLevel { get; private set; }
 
         private async void Awake()
         {
             if (IsColdStart)
             {
                 // If the persistent are not already loaded
-                if (!SceneManager.GetSceneByName(_persistentLevel.SceneReference.editorAsset.name).isLoaded)
+                if (!SceneManager.GetSceneByName(PersistentLevel.SceneReference.editorAsset.name).isLoaded)
                 {
                     // Synchronously loading the persistent scene
-                    var op = _persistentLevel.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
+                    var op = PersistentLevel.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
                     // This line are not actually finished loading the scene
                     op.WaitForCompletion();
                     // So we will have to use await here
                     await op.Task;
                 }
-                SceneManager.SetActiveScene(SceneManager.GetSceneByName(_persistentLevel.SceneReference.editorAsset.name));
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName(PersistentLevel.SceneReference.editorAsset.name));
 
-                LevelManager.AddLevelToLoadedList(_thisLevel);
-                if (_reload) LevelManager.LoadLevel(_thisLevel);
+                LevelManager.AddLevelToLoadedList(ThisLevel);
+                if (DoReload) LevelManager.LoadLevel(ThisLevel);
             }
         }
     }

@@ -1,15 +1,19 @@
-using SoraCore.Extension;
+using SoraCore.Manager.Instantiate;
 
-namespace SoraCore.Manager {
+namespace SoraCore.Manager.Audio
+{
     using MyBox;
     using UnityEngine;
-    public class AudioSourceReleaser : MonoBehaviour {
-        [field: SerializeField, AutoProperty] private AudioSource _audioSource;
 
-        private void Update() {
-            if (AudioListener.pause || _audioSource.isPlaying) return;
+    public class AudioSourceReleaser : MonoBehaviour
+    {
+        [field: SerializeField, AutoProperty] public AudioSource AudioSource { get; private set; }
 
-            GameObjectManager.ReleaseInstance(gameObject);
+        private void Update()
+        {
+            if (AudioListener.pause || AudioSource.isPlaying) return;
+
+            InstantiateManager.ReleaseInstance(gameObject);
         }
     }
 }

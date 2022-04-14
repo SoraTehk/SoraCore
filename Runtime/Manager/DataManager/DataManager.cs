@@ -1,105 +1,89 @@
-namespace SoraCore.Manager {
-    using UnityEngine;
+using SoraCore.Manager.Instantiate;
+
+namespace SoraCore.Manager.Serialization
+{
+    using MyBox;
     using System;
-    using System.IO;
     using System.Collections.Generic;
+    using System.IO;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
-    using UnityEngine.SceneManagement;
+    using UnityEngine;
     using UnityEngine.AddressableAssets;
     using UnityEngine.ResourceManagement.AsyncOperations;
+    using UnityEngine.SceneManagement;
 
-    public class DataManager : SoraManager {
+    public class DataManager : SoraManager<DataManager>
+    {
         #region Static -------------------------------------------------------------------------------------------------------
-
-        private static Action<string> _saveRequested;
-        private static Action<string> _loadRequested;
-
-
-        public static void Save(string fileName) {
-            if (_saveRequested != null) {
-                _saveRequested.Invoke(fileName);
-                return;
-            }
-
-            LogWarningForEvent(nameof(DataManager));
-        }
-
-        public static void Load(string fileName) {
-            if (_loadRequested != null) {
-                _loadRequested.Invoke(fileName);
-                return;
-            }
-
-            LogWarningForEvent(nameof(DataManager));
-        }
-
+        public static void Save(string fileName) => GetInstance().InnerSave(fileName);
+        public static void Load(string fileName) => GetInstance().InnerLoad(fileName);
         #endregion
 
-        private string _saveFolderPath;
+        [field: SerializeField, ReadOnly] public string SaveFolderPath { get; private set; }
 
-        private void Awake() {
-            _saveFolderPath = Application.persistentDataPath + "/saves/";
-        }
-
-        private void OnEnable() {
-            _saveRequested += InnerSave;
-            _loadRequested += InnerLoad;
-        }
-
-        private void OnDisable() {
-            _saveRequested -= InnerSave;
-            _loadRequested -= InnerLoad;
+        private void Awake()
+        {
+            SaveFolderPath = Application.persistentDataPath + "/saves/";
         }
 
         // REFACTOR: Look messy
         #region SaveableController, ISaveable
-        
-        public void InnerSave(string fileName) {
+        public void InnerSave(string fileName)
+        {
             // Don't fully override save because we might loaded on different scene
             SaveData saveData = SaveData.Current ?? new SaveData();
             SaveStates(ref saveData);
             WriteFile(fileName, saveData);
         }
-        public void InnerLoad(string fileName) {
+        public void InnerLoad(string fileName)
+        {
             SaveData saveData = ReadFile(fileName);
             LoadStates(saveData);
             SaveData.Current = saveData;
         }
 
-        private bool WriteFile(string fileName, SaveData saveData) {
-            if (!Directory.Exists(_saveFolderPath)) Directory.CreateDirectory(_saveFolderPath);
+        private bool WriteFile(string fileName, SaveData saveData)
+        {
+            if (!Directory.Exists(SaveFolderPath)) Directory.CreateDirectory(SaveFolderPath);
 
             // Writing data to file
-            using (FileStream stream = File.Create(_saveFolderPath + fileName)) {
+            using (FileStream stream = File.Create(SaveFolderPath + fileName))
+            {
                 BinaryFormatter formatter = GetBinaryFormatter();
                 formatter.Serialize(stream, saveData);
             }
 
             return true;
         }
-        private SaveData ReadFile(string fileName) {
-            string saveFilePath = _saveFolderPath + fileName;
+        private SaveData ReadFile(string fileName)
+        {
+            string saveFilePath = SaveFolderPath + fileName;
 
-            if (!File.Exists(saveFilePath)) {
+            if (!File.Exists(saveFilePath))
+            {
                 SoraCore.LogError($"File not existed at {saveFilePath}", nameof(DataManager));
                 return null;
             }
 
             // Reading data from file
-            try {
-                using (FileStream stream = File.Open(saveFilePath, FileMode.Open)) {
+            try
+            {
+                using (FileStream stream = File.Open(saveFilePath, FileMode.Open))
+                {
                     BinaryFormatter formatter = GetBinaryFormatter();
                     return (SaveData)formatter.Deserialize(stream);
                 }
 
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 SoraCore.LogError($"Failed to load file at {saveFilePath}\n{e.GetType()}", nameof(DataManager));
                 return null;
             }
         }
-        public static BinaryFormatter GetBinaryFormatter() {
+        public static BinaryFormatter GetBinaryFormatter()
+        {
             BinaryFormatter formatter = new();
 
             SurrogateSelector selector = new();
@@ -115,9 +99,11 @@ namespace SoraCore.Manager {
             return formatter;
         }
 
-        private void SaveStates(ref SaveData saveData) {
+        private void SaveStates(ref SaveData saveData)
+        {
             // Clear previous runtime data (only for loaded scenes)
-            for (int i = 0; i < SceneManager.sceneCount; i++) {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
                 Scene scene = SceneManager.GetSceneAt(i);
                 if (!scene.isLoaded) continue;
 
@@ -125,11 +111,14 @@ namespace SoraCore.Manager {
             }
 
             // Loop & start saving
-            foreach (var saveable in FindObjectsOfType<SaveableController>()) {
+            foreach (var saveable in FindObjectsOfType<SaveableController>())
+            {
                 // Runtime
-                if (saveable.IsRuntimeInstantiate) {
+                if (saveable.IsRuntimeInstantiate)
+                {
                     // Create new set if not already existed
-                    if (!saveData.SceneAssetPathToStateSet.ContainsKey(saveable.gameObject.scene.path)) {
+                    if (!saveData.SceneAssetPathToStateSet.ContainsKey(saveable.gameObject.scene.path))
+                    {
                         saveData.SceneAssetPathToStateSet[saveable.gameObject.scene.path] = new HashSet<RuntimeStateData>();
                     }
 
@@ -151,38 +140,46 @@ namespace SoraCore.Manager {
                 };
             }
         }
-        private void LoadStates(SaveData saveData) {
+        private void LoadStates(SaveData saveData)
+        {
             // Runtime
-            for (int i = 0; i < SceneManager.sceneCount; i++) {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
                 Scene scene = SceneManager.GetSceneAt(i);
                 if (!scene.isLoaded) continue;
 
                 if (!saveData.SceneAssetPathToStateSet.TryGetValue(scene.path, out HashSet<RuntimeStateData> stateDataSet)) continue;
-                
-                foreach (var stateData in stateDataSet) {
+
+                foreach (var stateData in stateDataSet)
+                {
                     // Try to find & load the conresponding asset prefab data
-                    var pdRef = new AssetReferenceT<BlueprintSO>(stateData.AssetGUID);
+                    var pdRef = new AssetReferenceT<BlueprintAsset>(stateData.AssetGUID);
 
                     var op = pdRef.LoadAssetAsync();
                     op.WaitForCompletion();
 
-                    if (op.Status == AsyncOperationStatus.Succeeded) {
+                    if (op.Status == AsyncOperationStatus.Succeeded)
+                    {
                         // Instantiate
-                        var gameObj = GameObjectManager.Get(op.Result);
+                        var gameObj = InstantiateManager.Get(op.Result);
                         //SceneManager.MoveGameObjectToScene(gameObj, scene);
                         SaveableController saveable = gameObj.GetComponent<SaveableController>();
                         saveable.LoadStates(stateData.TypeToData);
                     }
-                    else {
+                    else
+                    {
                         SoraCore.LogWarning($"Invalid assetGUID ({stateData.AssetGUID}) while trying to load", nameof(DataManager));
                     }
                 }
             }
 
             // Build-time
-            foreach (var saveable in FindObjectsOfType<SaveableController>()) {
-                if (saveData.GUIDToState.TryGetValue(saveable.GUID, out StateData stateData)) {
-                    if(!stateData.Scene.isLoaded) {
+            foreach (var saveable in FindObjectsOfType<SaveableController>())
+            {
+                if (saveData.GUIDToState.TryGetValue(saveable.GUID, out StateData stateData))
+                {
+                    if (!stateData.Scene.isLoaded)
+                    {
                         Debug.LogWarning($"{saveable.gameObject.name} (GUID: {saveable.GUID}) was detected but was in different scene in the save file.");
                         continue;
                     }
@@ -191,7 +188,6 @@ namespace SoraCore.Manager {
                 }
             }
         }
-        
         #endregion
     }
 }

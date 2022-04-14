@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028384, g: 0.225714, b: 0.30692288, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c2e66a7a1e2e740803568b60b7b7a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <SaveFolderPath>k__BackingField: 
 --- !u!4 &437573822
 Transform:
   m_ObjectHideFlags: 0
@@ -421,10 +422,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f68d6a80433204a8ad3bd33d0332e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioMixer: {fileID: 24100000, guid: f2185c8c1b79cd14dae6ad219df0894b, type: 2}
-  _audioSourcePrefab: {fileID: 11400000, guid: bdafe1ced9e0d0742a77ba584faa29bf, type: 2}
-  _volumeMultiplier: 30
-  _musicSource: {fileID: 1097037203}
+  <AudioMixer>k__BackingField: {fileID: 24100000, guid: f2185c8c1b79cd14dae6ad219df0894b,
+    type: 2}
+  <AudioSourceBlueprint>k__BackingField: {fileID: 11400000, guid: bdafe1ced9e0d0742a77ba584faa29bf,
+    type: 2}
+  <VolumeMultiplier>k__BackingField: 30
+  <MusicSource>k__BackingField: {fileID: 1097037203}
 --- !u!82 &1097037203
 AudioSource:
   m_ObjectHideFlags: 0

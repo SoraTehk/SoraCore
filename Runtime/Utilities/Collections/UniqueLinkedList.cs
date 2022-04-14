@@ -1,9 +1,11 @@
-﻿namespace SoraCore.Collections {
+﻿namespace SoraCore.Collections
+{
     using System.Collections;
     using System.Collections.Generic;
 
     // UNDONE: UniqueLinkedList<T>
-    public class UniqueLinkedList<T> : IEnumerable<T> {
+    public class UniqueLinkedList<T> : IEnumerable<T>
+    {
         private readonly HashSet<T> _hashSet = new();
         private readonly LinkedList<T> _linkedList = new();
 
@@ -15,7 +17,8 @@
         public LinkedListNode<T> AddLast(T item) => _hashSet.Add(item) ? _linkedList.AddLast(item) : null;
         public void RemoveFirst() { if (_hashSet.Remove(_linkedList.First.Value)) _linkedList.RemoveFirst(); }
         public void RemoveLast() { if (_hashSet.Remove(_linkedList.Last.Value)) _linkedList.RemoveLast(); }
-        public T ConsumeFirst() { 
+        public T ConsumeFirst()
+        {
             T item = _linkedList.First.Value;
 
             _hashSet.Remove(item);
@@ -24,7 +27,8 @@
             return item;
         }
 
-        public T ConsumeLast() {
+        public T ConsumeLast()
+        {
             T item = _linkedList.Last.Value;
 
             _hashSet.Remove(item);
@@ -33,11 +37,13 @@
             return item;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             _hashSet.Clear();
             _linkedList.Clear();
         }
-        public bool Contains(T item) {
+        public bool Contains(T item)
+        {
             return _hashSet.Contains(item);
         }
 

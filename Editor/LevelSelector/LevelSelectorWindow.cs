@@ -1,15 +1,13 @@
-using SoraCore.Collections;
-using SoraCore.Manager;
-
-namespace SoraCore.EditorTools {
-    using System;
+namespace SoraCore.EditorTools
+{
+    using Collections;
+    using Manager.Level;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEditor;
     using UnityEditor.SceneManagement;
     using UnityEditor.UIElements;
     using UnityEngine;
-    using UnityEngine.SceneManagement;
     using UnityEngine.UIElements;
 
     public enum InteractingType
@@ -18,10 +16,12 @@ namespace SoraCore.EditorTools {
         Full, // The selected level and it sub-levels
     }
 
-    public partial class LevelSelectorWindow : EditorWindow, IHasCustomMenu {
+    public partial class LevelSelectorWindow : EditorWindow, IHasCustomMenu
+    {
         #region Static ----------------------------------------------------------------------------------------------------
         [MenuItem("Tools/SoraCore/Level Selector")]
-        public static void ShowWindow() {
+        public static void ShowWindow()
+        {
             GetWindow<LevelSelectorWindow>("Level Selector");
         }
         #endregion
@@ -31,23 +31,23 @@ namespace SoraCore.EditorTools {
         public VisualTreeAsset LevelListUXML;
         public VisualTreeAsset LevelListEntryUXML;
 
-        private List<LevelContext> _levelContexts
+        private List<LevelContext> m_LevelContexts
         {
-            get => _data.LevelContexts;
-            set => _data.LevelContexts = value;
+            get => m_Data.LevelContexts;
+            set => m_Data.LevelContexts = value;
         }
 
-        private EnumField _interactBehaviourEF;
-        private Toggle _additiveToggle;
+        private EnumField m_InteractBehaviourEF;
+        private Toggle m_AdditiveToggle;
 
-        private ListView _levelLV;
-        private List<LevelContext> _visibleLevelContexts;
-        private List<LevelContext> _persistentLevelContexts;
-        private LevelListWindow _levelListWindow;
+        private ListView m_LevelLV;
+        private List<LevelContext> m_VisibleLevelContexts;
+        private List<LevelContext> m_PersistentLevelContexts;
+        private LevelListWindow m_LevelListWindow;
 
         public void AddItemsToMenu(GenericMenu menu)
         {
-            menu.AddItem(new GUIContent("Open Level List"), false, () => _levelListWindow = LevelListWindow.ShowWindow(this));
+            menu.AddItem(new GUIContent("Open Level List"), false, () => m_LevelListWindow = LevelListWindow.ShowWindow(this));
         }
 
         private void OnEnable()
@@ -58,49 +58,50 @@ namespace SoraCore.EditorTools {
 
         private void OnDisable()
         {
-            if (_levelListWindow != null) _levelListWindow.Close();
+            if (m_LevelListWindow != null) m_LevelListWindow.Close();
             SaveData();
         }
 
-        private void CreateGUI() {
+        private void CreateGUI()
+        {
             TemplateContainer root = LevelSelectorUXML.Instantiate();
             rootVisualElement.Add(root);
 
-            _interactBehaviourEF = root.Q<EnumField>("interact-behaviour-ef");
-            _interactBehaviourEF.value = _data.InteractBehaviourType;
-            _interactBehaviourEF.RegisterValueChangedCallback(evt => _data.InteractBehaviourType = (InteractingType)evt.newValue);
+            m_InteractBehaviourEF = root.Q<EnumField>("interact-behaviour-ef");
+            m_InteractBehaviourEF.value = m_Data.InteractBehaviourType;
+            m_InteractBehaviourEF.RegisterValueChangedCallback(evt => m_Data.InteractBehaviourType = (InteractingType)evt.newValue);
 
-            _additiveToggle = root.Q<Toggle>("additive-toggle");
-            _additiveToggle.value = _data.AdditiveToggle;
-            _additiveToggle.RegisterValueChangedCallback(evt => _data.AdditiveToggle = evt.newValue);
+            m_AdditiveToggle = root.Q<Toggle>("additive-toggle");
+            m_AdditiveToggle.value = m_Data.AdditiveToggle;
+            m_AdditiveToggle.RegisterValueChangedCallback(evt => m_Data.AdditiveToggle = evt.newValue);
 
-            _levelLV = root.Q<ListView>("level-lv");
+            m_LevelLV = root.Q<ListView>("level-lv");
             SetupListView();
         }
 
         private void SetupListView()
         {
-            _levelLV.makeItem = () =>
+            m_LevelLV.makeItem = () =>
             {
                 TemplateContainer entry = VisibleListEntryUXML.Instantiate();
                 entry.userData = new VisibleLevelListEntryController(entry);
                 return entry;
             };
-            _levelLV.bindItem = (item, index) =>
+            m_LevelLV.bindItem = (item, index) =>
             {
                 var ctrl = item.userData as VisibleLevelListEntryController;
 
                 // Object field
-                ctrl.LevelSOField.value = _visibleLevelContexts[index].Level;
+                ctrl.LevelSOField.value = m_VisibleLevelContexts[index].Level;
 
-                ctrl.AlwaysToggle.value = _visibleLevelContexts[index].IsPersistent;
+                ctrl.AlwaysToggle.value = m_VisibleLevelContexts[index].IsPersistent;
                 ctrl.AlwaysToggle.RegisterValueChangedCallback(evt =>
                 {
-                    _visibleLevelContexts[index].IsPersistent = evt.newValue;
+                    m_VisibleLevelContexts[index].IsPersistent = evt.newValue;
                     UpdatePersistentLevelList();
                 });
             };
-            _levelLV.onItemsChosen += OnItemsChosen;
+            m_LevelLV.onItemsChosen += OnItemsChosen;
             RefreshListView();
             UpdatePersistentLevelList();
         }
@@ -112,19 +113,19 @@ namespace SoraCore.EditorTools {
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
                 string path;
-                UniqueLinkedList<LevelSO> levelsToOpen;
+                UniqueLinkedList<LevelAsset> levelsToOpen;
 
                 // We have persistent level(s) to load
-                if (_persistentLevelContexts.Count > 0)
+                if (m_PersistentLevelContexts.Count > 0)
                 {
                     // Open the first persistent level
-                    path = AssetDatabase.GUIDToAssetPath(_persistentLevelContexts[0].Level.SceneReference.AssetGUID);
-                    EditorSceneManager.OpenScene(path, _additiveToggle.value ? OpenSceneMode.Additive : OpenSceneMode.Single);
+                    path = AssetDatabase.GUIDToAssetPath(m_PersistentLevelContexts[0].Level.SceneReference.AssetGUID);
+                    EditorSceneManager.OpenScene(path, m_AdditiveToggle.value ? OpenSceneMode.Additive : OpenSceneMode.Single);
 
                     // Retrieve all sub-levels of the first persistent level
-                    levelsToOpen = LevelManager.GetSubLevels(_persistentLevelContexts[0].Level);
+                    levelsToOpen = LevelManager.GetSubLevels(m_PersistentLevelContexts[0].Level);
 
-                    foreach (LevelContext persistentCtx in _persistentLevelContexts)
+                    foreach (LevelContext persistentCtx in m_PersistentLevelContexts)
                     {
                         // Add the other persistent level
                         levelsToOpen.AddLast(persistentCtx.Level);
@@ -140,20 +141,20 @@ namespace SoraCore.EditorTools {
                 {
                     // Open the selected level
                     path = AssetDatabase.GUIDToAssetPath(ctx.Level.SceneReference.AssetGUID);
-                    EditorSceneManager.OpenScene(path, _additiveToggle.value ? OpenSceneMode.Additive : OpenSceneMode.Single);
+                    EditorSceneManager.OpenScene(path, m_AdditiveToggle.value ? OpenSceneMode.Additive : OpenSceneMode.Single);
 
                     levelsToOpen = new();
                 }
 
                 // Interact Behaviour was set to 'Full'
-                if (_interactBehaviourEF.value.Equals(InteractingType.Full))
+                if (m_InteractBehaviourEF.value.Equals(InteractingType.Full))
                 {
                     // Retrieve & add all sub-levels of selected level
                     LevelManager.GetSubLevels(ctx.Level, ref levelsToOpen);
                 }
-                
+
                 // Open levels additively
-                foreach (LevelSO level in levelsToOpen)
+                foreach (LevelAsset level in levelsToOpen)
                 {
                     path = AssetDatabase.GUIDToAssetPath(level.SceneReference.AssetGUID);
                     EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
@@ -163,18 +164,18 @@ namespace SoraCore.EditorTools {
 
         private void RefreshListView()
         {
-            _visibleLevelContexts = (from ctx in _levelContexts
-                                     where ctx.IsVisible
-                                     select ctx).ToList();
-            _levelLV.itemsSource = _visibleLevelContexts;
-            _levelLV.RefreshItems();
+            m_VisibleLevelContexts = (from ctx in m_LevelContexts
+                                      where ctx.IsVisible
+                                      select ctx).ToList();
+            m_LevelLV.itemsSource = m_VisibleLevelContexts;
+            m_LevelLV.RefreshItems();
         }
 
         private void UpdatePersistentLevelList()
         {
-            _persistentLevelContexts = (from ctx in _visibleLevelContexts
-                                        where ctx.IsPersistent
-                                        select ctx).ToList();
+            m_PersistentLevelContexts = (from ctx in m_VisibleLevelContexts
+                                         where ctx.IsPersistent
+                                         select ctx).ToList();
         }
     }
 }

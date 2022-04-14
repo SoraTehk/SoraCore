@@ -167,5 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d67ac9447e462c245b38185cf936ad7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _persistentLevel: {fileID: 11400000, guid: 19dc326b584ba0c4bac1b7715b61096d, type: 2}
-  _levelToLoad: {fileID: 11400000, guid: d8699dfa93862524e95ddffe7d7769a0, type: 2}
+  <PersistentLevel>k__BackingField: {fileID: 11400000, guid: 19dc326b584ba0c4bac1b7715b61096d,
+    type: 2}
+  <LevelToLoad>k__BackingField: {fileID: 11400000, guid: d8699dfa93862524e95ddffe7d7769a0,
+    type: 2}

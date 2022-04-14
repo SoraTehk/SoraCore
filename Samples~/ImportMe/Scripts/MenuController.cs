@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class MenuController : MonoBehaviour {
+public class MenuController : MonoBehaviour
+{
     [field: SerializeField] public MenuUIController MenuUIController { get; private set; }
 
-    private void Start() {
+    private void Start()
+    {
         MenuUIController.enabled = true;
     }
 }
