@@ -1,0 +1,19 @@
+{
+    "name": "SoraCore.Editor",
+    "rootNamespace": "SoraCore.Editor",
+    "references": [
+        "GUID:55825f5a0c03c8d468a29749f8977f25",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

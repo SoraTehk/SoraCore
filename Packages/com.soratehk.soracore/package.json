@@ -1,0 +1,20 @@
+{
+  "name": "com.soratehk.soracore",
+  "version": "1.0.0",
+  "displayName": "SoraCore",
+  "description": "Unity Package for my repeatable needs",
+  "unity": "6000.0",
+  "documentationUrl": "https://github.com/HuySora/SoraCore",
+  "changelogUrl": "https://github.com/HuySora/SoraCore",
+  "licensesUrl": "https://github.com/HuySora/SoraCore",
+  "keywords": [
+    "sora",
+    "manager",
+    "system"
+  ],
+  "author": {
+    "name": "Tran Duc Huy",
+    "email": "huytran1998.dev@gmail.com",
+    "url": "https://github.com/HuySora"
+  }
+}
