@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SoraTehk.Extensions {
     public static partial class TypeX {
-        public static string GetFriendlyTypeName(this Type type) {
+        public static string GetFriendlyTypeName(this Type? type) {
             if (type == null) return "null";
             
             if (!type.IsGenericType) return type.Name;

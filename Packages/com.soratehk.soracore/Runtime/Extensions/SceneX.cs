@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace SoraTehk.Extensions {
     public static partial class SceneX {
-        public static bool TryFindFirstComponent<T>(this Scene scene, out T result, string gameObjName = "") where T : Component {
+        public static bool TryFindFirstComponent<T>(this Scene scene, out T? result, string gameObjName = "") where T : Component {
             result = null;
             bool checkName = !string.IsNullOrEmpty(gameObjName);
             

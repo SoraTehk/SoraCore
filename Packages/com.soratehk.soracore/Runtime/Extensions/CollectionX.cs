@@ -2,9 +2,24 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using static SoraTehk.Global;
 
 namespace SoraTehk.Extensions {
     public static partial class CollectionX {
+        #region Shuffle
+        /// <summary>
+        /// Shuffles the elements of a list in-place using the Fisher–Yates algorithm.
+        /// </summary>
+        public static void Shuffle<T>(this IList<T> list) {
+            if (list == null) throw new ArgumentNullException(nameof(list));
+            
+            for (int i = list.Count - 1; i > 0; i--) {
+                int j = Rng.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
+        #endregion
+        
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> collection) {
             if (queue == null) throw new ArgumentNullException(nameof(queue));
             if (collection == null) throw new ArgumentNullException(nameof(collection));
@@ -19,7 +34,7 @@ namespace SoraTehk.Extensions {
             TKey upperBound
         ) where TKey : IComparable<TKey> {
             //
-            if (sortedList == null || sortedList.Count == 0) yield break;
+            if (sortedList.Count == 0) yield break;
             var keys = sortedList.Keys;
             
             // Start

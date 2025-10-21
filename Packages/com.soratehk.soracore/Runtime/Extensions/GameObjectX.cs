@@ -1,8 +1,5 @@
-using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
+using UnityEngine;
 
 namespace SoraTehk.Extensions {
     public static partial class GameObjectX {
@@ -12,7 +9,7 @@ namespace SoraTehk.Extensions {
             foreach (var cpn in cpns) {
                 if (cpn != null) continue;
                 
-                string gObjInfo = "";
+                string gObjInfo;
 #if UNITY_EDITOR
                 if (PrefabUtility.IsPartOfPrefabAsset(gObj)) {
                     string path = AssetDatabase.GetAssetPath(gObj);

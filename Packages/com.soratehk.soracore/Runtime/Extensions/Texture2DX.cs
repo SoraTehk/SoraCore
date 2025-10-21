@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace SoraTehk.Extensions {
     public static partial class Texture2DX {
+        public static UObject? FromBytes(byte[] bytes) {
+            var tex = new Texture2D(2, 2);
+            return tex.LoadImage(bytes) ? tex : null;
+        }
         public static Texture2D CreateRandomColor(int width, int height) {
             Color randomColor = new Color(Random.value, Random.value, Random.value);
             Texture2D texture = new Texture2D(width, height);

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Networking;
-using System;
 
 namespace SoraTehk.Extensions {
     public static partial class UnityWebRequestX {
@@ -9,13 +9,13 @@ namespace SoraTehk.Extensions {
             if (uwr.result != UnityWebRequest.Result.Success) throw new InvalidOperationException($"UnityWebRequest failed: {uwr.error}");
             
             Type typeOfT = typeof(T);
-            
-            if (typeOfT == typeof(TextAsset)) return new TextAsset(uwr.downloadHandler.text) as T;
-            if (typeOfT == typeof(AssetBundle)) return DownloadHandlerAssetBundle.GetContent(uwr) as T;
-            if (typeOfT == typeof(AudioClip)) return DownloadHandlerAudioClip.GetContent(uwr) as T;
-            if (typeOfT == typeof(Texture2D)) return DownloadHandlerTexture.GetContent(uwr) as T;
-            
-            throw new NotSupportedException($"Unsupported type {typeOfT}");
+            return typeOfT switch {
+                _ when typeOfT == typeof(TextAsset) => (new TextAsset(uwr.downloadHandler.text) as T)!,
+                _ when typeOfT == typeof(AssetBundle) => (DownloadHandlerAssetBundle.GetContent(uwr) as T)!,
+                _ when typeOfT == typeof(AudioClip) => (DownloadHandlerAudioClip.GetContent(uwr) as T)!,
+                _ when typeOfT == typeof(Texture2D) => (DownloadHandlerTexture.GetContent(uwr) as T)!,
+                _ => throw new ArgumentOutOfRangeException(nameof(T), typeOfT, "Unsupported asset type")
+            };
         }
     }
 }
