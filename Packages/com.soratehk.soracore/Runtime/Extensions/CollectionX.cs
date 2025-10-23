@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using static SoraTehk.Global;
 
 namespace SoraTehk.Extensions {
     public static partial class CollectionX {
@@ -14,7 +13,7 @@ namespace SoraTehk.Extensions {
             if (list == null) throw new ArgumentNullException(nameof(list));
             
             for (int i = list.Count - 1; i > 0; i--) {
-                int j = Rng.Next(i + 1);
+                int j = Global.GRandom.Next(i + 1);
                 (list[i], list[j]) = (list[j], list[i]);
             }
         }

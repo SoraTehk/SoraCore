@@ -1,6 +1,7 @@
 using UnityEngine;
 
 namespace SoraTehk.Extensions {
+    // ReSharper disable once InconsistentNaming
     public static partial class Texture2DX {
         public static UObject? FromBytes(byte[] bytes) {
             var tex = new Texture2D(2, 2);

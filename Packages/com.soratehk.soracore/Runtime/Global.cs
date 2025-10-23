@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Random = System.Random;
 
 namespace SoraTehk {
     public static class Global {
-        public static readonly Random Rng = new();
+        public static readonly Random GRandom = new();
     }
 }
 

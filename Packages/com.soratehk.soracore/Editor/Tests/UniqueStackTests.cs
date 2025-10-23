@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using SoraTehk.Collections;
 
-namespace VTBeat.Tests {
+namespace SoraTehk.Tests {
     public class UniqueStackTests {
         [Test]
         public void AddAndRemove_ShouldMaintainStackIntegrity() {
